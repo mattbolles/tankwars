@@ -1,7 +1,12 @@
 # csc413-tankgame
 
-## Student Name  :
-## Student ID    :
+## Student Name  : Matt Bolles
+## Student ID    : 913249017
+## IDE Used      : IntelliJ IDEA Ultimate 2019.3
+## Java Version  : 
+## GitHub Link
+## Controls:
+
 
 
 ## src folder is to be used for source code only.

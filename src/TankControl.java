@@ -39,6 +39,7 @@ public class TankControl implements KeyListener {
     @Override
     public void keyPressed(KeyEvent ke) {
         int keyPressed = ke.getKeyCode();
+        int location = ke.getKeyLocation();
         if (keyPressed == up) {
             this.tank.toggleUpPressed();
         }
@@ -51,17 +52,26 @@ public class TankControl implements KeyListener {
         if (keyPressed == right) {
             this.tank.toggleRightPressed();
         }
-        // shift for shoot (for right side player? maybe use space for left side player?)
-        if (keyPressed == KeyEvent.VK_SHIFT) {
-            this.tank.toggleShiftPressed();
+        // shift for shoot - left shift for left player, right shift for right player
+        if (keyPressed == 64) {
+            // left shift
+            if (location == KeyEvent.KEY_LOCATION_LEFT) {
+                this.tank.toggleLeftShiftPressed();
+            }
+            // right shift
+            if (location == KeyEvent.KEY_LOCATION_RIGHT) {
+                this.tank.toggleRightShiftPressed();
+            }
+
         }
         
 
     }
 
     @Override
-    public void keyReleased(KeyEvent keyEvent) {
-        int keyReleased = keyEvent.getKeyCode();
+    public void keyReleased(KeyEvent ke) {
+        int keyReleased = ke.getKeyCode();
+        int location = ke.getKeyLocation();
         if (keyReleased  == up) {
             this.tank.unToggleUpPressed();
         }
@@ -73,6 +83,18 @@ public class TankControl implements KeyListener {
         }
         if (keyReleased  == right) {
             this.tank.unToggleRightPressed();
+        }
+
+        if (keyReleased == 64) {
+            // left shift
+            if (location == KeyEvent.KEY_LOCATION_LEFT) {
+                this.tank.unToggleLeftShiftPressed();
+            }
+            // right shift
+            if (location == KeyEvent.KEY_LOCATION_RIGHT) {
+                this.tank.unToggleRightShiftPressed();
+            }
+
         }
 
     }

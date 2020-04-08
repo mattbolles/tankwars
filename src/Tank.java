@@ -20,16 +20,15 @@ public class Tank{
     // R from trig - higher the value, faster it goes
     private final int R = 2;
     private final int ROTATION_SPEED = 3;
-
+    private Rectangle hitBox; // for collision detection
 
     private BufferedImage tankImage;
     private boolean UpPressed;
     private boolean DownPressed;
     private boolean RightPressed;
     private boolean LeftPressed;
-    private boolean ShiftPressed;
-    // add later
-    //private boolean ShootPressed;
+    private boolean SpacePressed;
+    private boolean EnterPressed;
 
 
     Tank(int x, int y, int vx, int vy, int angle, BufferedImage tankImage) {
@@ -39,7 +38,13 @@ public class Tank{
         this.vy = vy;
         this.tankImage = tankImage;
         this.angle = angle;
+        // puts hitbox in location of tank, dimensions are same as tank image
+        this.hitBox = new Rectangle(x,y,this.tankImage.getWidth(), this.tankImage.getHeight());
+    }
 
+    public Rectangle getHitBox() {
+        // return bounds of hitbox - where they can collide
+        return hitBox.getBounds();
     }
 
 
@@ -59,8 +64,12 @@ public class Tank{
         this.LeftPressed = true;
     }
 
-    void toggleShiftPressed() {
-        this.ShiftPressed = true;
+    void toggleLeftShiftPressed() {
+        this.SpacePressed = true;
+    }
+
+    void toggleRightShiftPressed() {
+        this.EnterPressed = true;
     }
 
     void unToggleUpPressed() {
@@ -79,8 +88,12 @@ public class Tank{
         this.LeftPressed = false;
     }
 
-    void unToggleShiftPressed() {
-        this.ShiftPressed = false;
+    void unToggleLeftShiftPressed() {
+        this.SpacePressed = false;
+    }
+
+    void unToggleRightShiftPressed() {
+        this.EnterPressed = false;
     }
 
 
@@ -100,7 +113,10 @@ public class Tank{
         if (this.RightPressed) {
             this.rotateRight();
         }
-        if (this.ShiftPressed) {
+        if (this.SpacePressed) {
+            this.shoot();
+        }
+        if (this.EnterPressed) {
             this.shoot();
         }
 
@@ -119,7 +135,10 @@ public class Tank{
         vy = (int) Math.round(R * Math.sin(Math.toRadians(angle)));
         x -= vx;
         y -= vy;
+        // makes sure doesn't go out of bounds
         checkBorder();
+        // update hitbox location
+        this.hitBox.setLocation(x,y);
     }
 
     private void moveForwards() {
@@ -128,6 +147,7 @@ public class Tank{
         x += vx;
         y += vy;
         checkBorder();
+        this.hitBox.setLocation(x,y);
     }
 
     private void shoot() {
@@ -142,14 +162,14 @@ public class Tank{
             x = 30;
         }
         // 88 = width of tank image - adjust later to include wall
-        if (x >= TankRotationExample.SCREEN_WIDTH - 88) {
-            x = TankRotationExample.SCREEN_WIDTH - 88;
+        if (x >= TankGame.SCREEN_WIDTH - 88) {
+            x = TankGame.SCREEN_WIDTH - 88;
         }
         if (y < 40) {
             y = 40;
         }
-        if (y >= TankRotationExample.SCREEN_HEIGHT - 80) {
-            y = TankRotationExample.SCREEN_HEIGHT - 80;
+        if (y >= TankGame.SCREEN_HEIGHT - 80) {
+            y = TankGame.SCREEN_HEIGHT - 80;
         }
     }
 

@@ -52,17 +52,8 @@ public class TankControl implements KeyListener {
         if (keyPressed == right) {
             this.tank.toggleRightPressed();
         }
-        // shift for shoot - left shift for left player, right shift for right player
-        if (keyPressed == 64) {
-            // left shift
-            if (location == KeyEvent.KEY_LOCATION_LEFT) {
-                this.tank.toggleLeftShiftPressed();
-            }
-            // right shift
-            if (location == KeyEvent.KEY_LOCATION_RIGHT) {
-                this.tank.toggleRightShiftPressed();
-            }
-
+        if (keyPressed == shoot) {
+            this.tank.toggleShootPressed();
         }
         
 
@@ -85,16 +76,8 @@ public class TankControl implements KeyListener {
             this.tank.unToggleRightPressed();
         }
 
-        if (keyReleased == 64) {
-            // left shift
-            if (location == KeyEvent.KEY_LOCATION_LEFT) {
-                this.tank.unToggleLeftShiftPressed();
-            }
-            // right shift
-            if (location == KeyEvent.KEY_LOCATION_RIGHT) {
-                this.tank.unToggleRightShiftPressed();
-            }
-
+        if (keyReleased == shoot) {
+            this.tank.unToggleShootPressed();
         }
 
     }

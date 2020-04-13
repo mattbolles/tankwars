@@ -27,8 +27,7 @@ public class Tank{
     private boolean DownPressed;
     private boolean RightPressed;
     private boolean LeftPressed;
-    private boolean SpacePressed;
-    private boolean EnterPressed;
+    private boolean ShootPressed;
 
 
     Tank(int x, int y, int vx, int vy, int angle, BufferedImage tankImage) {
@@ -64,13 +63,7 @@ public class Tank{
         this.LeftPressed = true;
     }
 
-    void toggleLeftShiftPressed() {
-        this.SpacePressed = true;
-    }
-
-    void toggleRightShiftPressed() {
-        this.EnterPressed = true;
-    }
+    void toggleShootPressed() {this.ShootPressed = true;}
 
     void unToggleUpPressed() {
         this.UpPressed = false;
@@ -88,12 +81,46 @@ public class Tank{
         this.LeftPressed = false;
     }
 
-    void unToggleLeftShiftPressed() {
-        this.SpacePressed = false;
+    void unToggleShootPressed() {this.ShootPressed = false;}
+
+    public void setX(int x) {
+        this.x = x;
     }
 
-    void unToggleRightShiftPressed() {
-        this.EnterPressed = false;
+    public int getX() {
+        return x;
+    }
+
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    public int getY() {
+        return y;
+    }
+
+    public void setVx(int vx) {
+        this.vx = vx;
+    }
+
+    public int getVx() {
+        return vx;
+    }
+
+    public void setVy(int vy) {
+        this.vy = vy;
+    }
+
+    public int getVy() {
+        return vy;
+    }
+
+    public boolean isUpPressed() {
+        return UpPressed;
+    }
+
+    public boolean isDownPressed() {
+        return DownPressed;
     }
 
 
@@ -113,11 +140,8 @@ public class Tank{
         if (this.RightPressed) {
             this.rotateRight();
         }
-        if (this.SpacePressed) {
-            this.shoot();
-        }
-        if (this.EnterPressed) {
-            this.shoot();
+        if (this.ShootPressed) {
+            System.out.println("shot fired");
         }
 
     }
@@ -158,18 +182,18 @@ public class Tank{
 
 
     private void checkBorder() {
-        if (x < 30) {
-            x = 30;
+        if (x < 32) {
+            x = 32;
         }
-        // 88 = width of tank image - adjust later to include wall
-        if (x >= TankGame.SCREEN_WIDTH - 88) {
-            x = TankGame.SCREEN_WIDTH - 88;
+        //  88 = width of tank image + width of tile
+        if (x >= TankGame.SCREEN_WIDTH - 80) {
+            x = TankGame.SCREEN_WIDTH - 80;
         }
-        if (y < 40) {
-            y = 40;
+        if (y < 32) {
+            y = 32;
         }
-        if (y >= TankGame.SCREEN_HEIGHT - 80) {
-            y = TankGame.SCREEN_HEIGHT - 80;
+        if (y >= TankGame.SCREEN_HEIGHT - 104) {
+            y = TankGame.SCREEN_HEIGHT - 104;
         }
     }
 
@@ -185,6 +209,10 @@ public class Tank{
         rotation.rotate(Math.toRadians(angle), this.tankImage.getWidth() / 2.0, this.tankImage.getHeight() / 2.0);
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(this.tankImage, rotation, null);
+
+        // draw hitbox in yellow
+        g2d.setColor(Color.YELLOW);
+        g2d.drawRect(x,y,this.tankImage.getWidth(),this.tankImage.getHeight());
     }
 
 

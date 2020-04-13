@@ -10,7 +10,10 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.image.BufferedImage;
+import java.io.BufferedReader;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
 
 
 import static javax.imageio.ImageIO.read;
@@ -32,27 +35,48 @@ public class TankGame extends JPanel  {
     public double userScreenWidth = userScreenSize.getWidth();
     public double userScreenHeight = userScreenSize.getHeight();
     */
-    public static final int SCREEN_WIDTH = 1280;
-    public static final int SCREEN_HEIGHT = 960;
+    public static final int SCREEN_WIDTH = 1280; // 40 columns;
+    public static final int SCREEN_HEIGHT = 820; // 25 rows - extra 20 is necessary to prevent blocks being cut off
+    // for some reason
     private BufferedImage world;
     private BufferedImage background;
+    private Background backgroundTile;
+    public static BufferedImage bulletImage;
     private Graphics2D buffer;
     private JFrame jFrame;
     private Tank tankOne;
     private Tank tankTwo;
     SoundPlayer soundPlayer;
+    ArrayList<Wall> walls;
+
 
 
     public static void main(String[] args) {
-        TankGame tankExample = new TankGame();
-        tankExample.init();
+        TankGame tankGame = new TankGame();
+        tankGame.init();
         try {
 
             while (true) {
-                tankExample.tankOne.update();
-                tankExample.tankTwo.update();
-                tankExample.repaint();
-              //  System.out.println(tankExample.t1);
+                tankGame.tankOne.update();
+                tankGame.tankTwo.update();
+                tankGame.repaint();
+                int bump = 20;
+                //make a seperate function for this after - more generic
+                if (tankGame.tankOne.getHitBox().intersects(tankGame.tankTwo.getHitBox())) {
+                    //tankGame.tankOne.hasCollided(); // add this, maybe to replace the other stuff
+                    if (tankGame.tankOne.isDownPressed()) {
+                        // + makes the tank not run over the other one
+                        tankGame.tankOne.setX(tankGame.tankOne.getX() - tankGame.tankOne.getVx());
+                        tankGame.tankOne.setY(tankGame.tankOne.getY() - tankGame.tankOne.getVy());
+                    }
+
+                    if (tankGame.tankTwo.isDownPressed()) {
+                        tankGame.tankTwo.setX(tankGame.tankTwo.getX() - tankGame.tankTwo.getVx());
+                        tankGame.tankTwo.setY(tankGame.tankTwo.getY() - tankGame.tankTwo.getVy());
+                    }
+                    System.out.println("Collision detected");
+                }
+              //  System.out.println(tankGame.t1);
                 Thread.sleep(1000 / 144);
             }
         } catch (InterruptedException ignored) {
@@ -65,9 +89,12 @@ public class TankGame extends JPanel  {
     private void init() {
         this.jFrame = new JFrame("Tank Wars");
         this.world = new BufferedImage(TankGame.SCREEN_WIDTH, TankGame.SCREEN_HEIGHT, BufferedImage.TYPE_INT_RGB);
-        this.background = new BufferedImage(TankGame.SCREEN_WIDTH, TankGame.SCREEN_HEIGHT, BufferedImage.TYPE_INT_RGB);
         BufferedImage tankImage = null;
         BufferedImage tank2Image = null;
+        BufferedImage breakableWall = null;
+        BufferedImage unBreakableWall = null;
+        BufferedImage background = null;
+        walls = new ArrayList<>();
         try {
 
             /*
@@ -91,7 +118,51 @@ public class TankGame extends JPanel  {
             //Using class loaders to read in resources
             tankImage = read(TankGame.class.getClassLoader().getResource("tank1.png"));
             tank2Image = read(TankGame.class.getClassLoader().getResource("tank2.png"));
-            background = read(TankGame.class.getClassLoader().getResource("background.bmp"));
+            TankGame.bulletImage = read(TankGame.class.getClassLoader().getResource("bullet.gif"));
+            background = read(TankGame.class.getClassLoader().getResource("background.png"));
+            breakableWall = read(TankGame.class.getClassLoader().getResource("WallBreakable.gif"));
+            unBreakableWall = read(TankGame.class.getClassLoader().getResource("WallUnbreakable.gif"));
+
+            //background info:
+            int backgroundWidth = background.getWidth();
+            int backgroundHeight = background.getHeight();
+            backgroundTile = new Background(backgroundWidth, backgroundHeight, background);
+
+            //for reading maps:
+            InputStreamReader inputStreamReader = new InputStreamReader(TankGame.class.getClassLoader().getResourceAsStream("maps/map1"));
+            BufferedReader mapReader = new BufferedReader(inputStreamReader);
+
+            String row = mapReader.readLine();
+            if (row == null) {
+                throw new IOException("Error! No data in map file :(");
+            }
+            // split by tab as delim
+            String mapInfo[] = row.split("\t");
+            int numOfCols = Integer.parseInt(mapInfo[0]);
+            int numOfRows = Integer.parseInt(mapInfo[1]);
+            // get data from map file
+            // go row by row to get each data for each row
+            for (int currentRow = 0; currentRow < numOfRows; currentRow++) {
+                row = mapReader.readLine();
+                mapInfo = row.split("\t");
+                //go column by column for each row
+                for (int currentCol = 0; currentCol < numOfCols; currentCol++) {
+                    switch(mapInfo[currentCol]) {
+                        case "2":
+                            //breakable wall
+                            //mult by 32 since wall tile is 32x32 pixels
+                            BreakableWall br = new BreakableWall(currentCol*32, currentRow*32, breakableWall);
+                            this.walls.add(br);
+                            break;
+                        case "3":
+                        case "9":
+                            //unbreakable wall
+                            UnBreakableWall ubr = new UnBreakableWall(currentCol*32, currentRow*32, unBreakableWall);
+                            this.walls.add(ubr);
+                    }
+                }
+            }
+
             //Using file objects to read in resources.
             //tankImage = read(new File("tank1.png"));
 
@@ -100,9 +171,8 @@ public class TankGame extends JPanel  {
         }
 
         // change these later, add separate tank images
-        tankOne = new Tank(200, 200, 0, 0, 0, tankImage);
-        tankTwo = new Tank(980, 400, 0, 0, 180, tank2Image);
-
+        tankOne = new Tank(200, 100, 0, 0, 0, tankImage);
+        tankTwo = new Tank(980, 600, 0, 0, 180, tank2Image);
 
         // left side control, uses WASD to move and space to shoot
         TankControl tankOneControl = new TankControl(tankOne, KeyEvent.VK_W,
@@ -131,6 +201,19 @@ public class TankGame extends JPanel  {
         soundPlayer = new SoundPlayer(1,"crystalraindrops.wav");
     }
 
+    /*public void drawBackground() {
+        // move this to a proper location... later
+        int backgroundWidth = background.getWidth();
+        int backgroundHeight = background.getHeight();
+        for (int y = 0; y < getHeight(); y += backgroundHeight) {
+            for (int x = 0; x < getWidth(); x += backgroundWidth) {
+                //figure out how to get this into a seperate function - pass as parameter, assuming possible
+
+                g2.drawImage(background, x, y, this);
+            }
+        }
+    }*/
+
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
@@ -139,16 +222,10 @@ public class TankGame extends JPanel  {
         buffer.setColor(Color.BLACK);
         //following line avoids image trailing
         buffer.fillRect(0,0,TankGame.SCREEN_WIDTH,TankGame.SCREEN_HEIGHT);
-        int backgroundWidth = background.getWidth();
-        int backgroundHeight = background.getHeight();
-
+        this.backgroundTile.drawImage(buffer);
+        this.walls.forEach(wall -> wall.drawImage(buffer));
         this.tankOne.drawImage(buffer);
         this.tankTwo.drawImage(buffer);
-        for (int y = 0; y < getHeight(); y += backgroundHeight) {
-            for (int x = 0; x < getWidth(); x += backgroundWidth) {
-                g2.drawImage(background, x, y, this);
-            }
-        }
         g2.drawImage(world,0,0,null);
 
 

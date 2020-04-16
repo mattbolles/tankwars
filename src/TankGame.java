@@ -41,6 +41,7 @@ public class TankGame extends JPanel  {
     // for some reason
     private BufferedImage world;
     private Background backgroundTile;
+    public static BufferedImage breakableWallDamaged = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
     public static BufferedImage bulletImage = new BufferedImage(50,50,BufferedImage.TYPE_INT_ARGB);
     public static BufferedImage explosionSmall = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
     private Graphics2D buffer;
@@ -124,6 +125,8 @@ public class TankGame extends JPanel  {
             TankGame.explosionSmall = read(TankGame.class.getClassLoader().getResource("Explosion_small.gif"));
             background = read(TankGame.class.getClassLoader().getResource("background.png"));
             breakableWall = read(TankGame.class.getClassLoader().getResource("WallBreakable.gif"));
+            TankGame.breakableWallDamaged = read(TankGame.class.getClassLoader().getResource("WallBreakableDamaged" +
+                    ".gif"));
             unBreakableWall = read(TankGame.class.getClassLoader().getResource("WallUnbreakable.gif"));
 
             //background info:

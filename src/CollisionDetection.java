@@ -9,14 +9,13 @@ public class CollisionDetection{
     boolean collisionDetected = false;
     BufferedImage objectImage1, objectImage2;
 
-    public CollisionDetection(GameObject gameObject1, GameObject gameObject2, boolean collisionDetected) {
+    public CollisionDetection(GameObject gameObject1, GameObject gameObject2) {
         this.gameObject1 = gameObject1;
         this.gameObject2 = gameObject2;
-        this.collisionDetected = collisionDetected;
     }
 
     public boolean isCollisionDetected(GameObject gameObject1, GameObject gameObject2) {
-        if (gameObject1.getHitbox().intersects(gameObject2.getHitbox())) {
+        if (gameObject1.getHitBox().intersects(gameObject2.getHitBox())) {
             collisionDetected = true;
         }
         return collisionDetected;

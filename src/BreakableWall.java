@@ -1,19 +1,40 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+import static javax.imageio.ImageIO.read;
+
 public class BreakableWall extends Wall{
-    int x, y;
+    int x, y, height, width;
     int state = 2; // state of wall brokenness - change to 1 when hit, 0 when broken
+    CollisionDetection collisionDetection;
     BufferedImage wallImage;
 
     public BreakableWall(int x, int y, BufferedImage wallImage) {
         this.x = x;
         this.y = y;
+        this.height = wallImage.getHeight();
+        this.width = wallImage.getWidth();
         this.wallImage = wallImage;
+        this.state = state;
     }
 
-    public void setState(int wallHits) {
-        if (wallHits == 1
+
+    public void stateUpdate(int state) {
+        if (state == 1) {
+            this.wallImage = TankGame.breakableWallDamaged;
+        }
+
+        if (state < 1) {
+            destroy();
+        }
+    }
+
+    public void destroy() {
+
+    }
+
+    public void setState(int state) {
+        this.state = state;
     }
 
     @Override

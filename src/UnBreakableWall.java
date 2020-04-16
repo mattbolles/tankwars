@@ -3,7 +3,7 @@ import java.awt.image.BufferedImage;
 
 public class UnBreakableWall extends Wall {
     int x, y;
-    BufferedImage wallImage;
+    BufferedImage wallImage = new BufferedImage(32,32, BufferedImage.TYPE_INT_ARGB);
 
     public UnBreakableWall(int x, int y, BufferedImage wallImage) {
         this.x = x;

@@ -13,6 +13,7 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.nio.Buffer;
 import java.util.ArrayList;
 
 
@@ -39,13 +40,14 @@ public class TankGame extends JPanel  {
     public static final int SCREEN_HEIGHT = 820; // 25 rows - extra 20 is necessary to prevent blocks being cut off
     // for some reason
     private BufferedImage world;
-    private BufferedImage background;
     private Background backgroundTile;
-    public static BufferedImage bulletImage;
+    public static BufferedImage bulletImage = new BufferedImage(50,50,BufferedImage.TYPE_INT_ARGB);
+    public static BufferedImage explosionSmall = new BufferedImage(32, 32, BufferedImage.TYPE_INT_ARGB);
     private Graphics2D buffer;
     private JFrame jFrame;
     private Tank tankOne;
     private Tank tankTwo;
+    static long tickCounter = 0;
     SoundPlayer soundPlayer;
     ArrayList<Wall> walls;
 
@@ -60,6 +62,7 @@ public class TankGame extends JPanel  {
                 tankGame.tankOne.update();
                 tankGame.tankTwo.update();
                 tankGame.repaint();
+                tickCounter++;
                 int bump = 20;
                 //make a seperate function for this after - more generic
                 if (tankGame.tankOne.getHitBox().intersects(tankGame.tankTwo.getHitBox())) {
@@ -74,7 +77,6 @@ public class TankGame extends JPanel  {
                         tankGame.tankTwo.setX(tankGame.tankTwo.getX() - tankGame.tankTwo.getVx());
                         tankGame.tankTwo.setY(tankGame.tankTwo.getY() - tankGame.tankTwo.getVy());
                     }
-                    System.out.println("Collision detected");
                 }
               //  System.out.println(tankGame.t1);
                 Thread.sleep(1000 / 144);
@@ -116,9 +118,10 @@ public class TankGame extends JPanel  {
              *
              */
             //Using class loaders to read in resources
-            tankImage = read(TankGame.class.getClassLoader().getResource("tank1.png"));
-            tank2Image = read(TankGame.class.getClassLoader().getResource("tank2.png"));
-            TankGame.bulletImage = read(TankGame.class.getClassLoader().getResource("bullet.gif"));
+            tankImage = read(TankGame.class.getClassLoader().getResource("tank1new.png"));
+            tank2Image = read(TankGame.class.getClassLoader().getResource("tank2new.png"));
+            TankGame.bulletImage = read(TankGame.class.getClassLoader().getResource("BulletCropped.png"));
+            TankGame.explosionSmall = read(TankGame.class.getClassLoader().getResource("Explosion_small.gif"));
             background = read(TankGame.class.getClassLoader().getResource("background.png"));
             breakableWall = read(TankGame.class.getClassLoader().getResource("WallBreakable.gif"));
             unBreakableWall = read(TankGame.class.getClassLoader().getResource("WallUnbreakable.gif"));
@@ -198,7 +201,7 @@ public class TankGame extends JPanel  {
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.jFrame.setVisible(true);
         // background music
-        soundPlayer = new SoundPlayer(1,"crystalraindrops.wav");
+        //soundPlayer = new SoundPlayer(1,"crystalraindrops.wav");
     }
 
     /*public void drawBackground() {

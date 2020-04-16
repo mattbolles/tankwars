@@ -3,14 +3,17 @@ import java.awt.image.BufferedImage;
 
 public class BreakableWall extends Wall{
     int x, y;
-    // state of wall brokenness - change to 1 when hit, 0 when broken
-    int state = 2;
+    int state = 2; // state of wall brokenness - change to 1 when hit, 0 when broken
     BufferedImage wallImage;
 
     public BreakableWall(int x, int y, BufferedImage wallImage) {
         this.x = x;
         this.y = y;
         this.wallImage = wallImage;
+    }
+
+    public void setState(int wallHits) {
+        if (wallHits == 1
     }
 
     @Override

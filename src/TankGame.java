@@ -13,7 +13,6 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.nio.Buffer;
 import java.util.ArrayList;
 
 
@@ -29,15 +28,15 @@ import static javax.imageio.ImageIO.read;
  */
 public class TankGame extends JPanel  {
 
-    public static final int WORLD_WIDTH = 2000;
-    public static final int WORLD_HEIGHT = 2000;
+    public static final int WORLD_WIDTH = 2016; // 63 col
+    public static final int WORLD_HEIGHT = 2016; // 63 row
    /* // get user screen resolution - come back and add this later
     Dimension userScreenSize = Toolkit.getDefaultToolkit().getScreenSize();
     public double userScreenWidth = userScreenSize.getWidth();
     public double userScreenHeight = userScreenSize.getHeight();
     */
     public static final int SCREEN_WIDTH = 1280; // 40 columns;
-    public static final int SCREEN_HEIGHT = 820; // 25 rows - extra 20 is necessary to prevent blocks being cut off
+    public static final int SCREEN_HEIGHT = 800; // 25 rows - extra 20 is necessary to prevent blocks being cut off
     // for some reason
     private BufferedImage world;
     private Background backgroundTile;
@@ -91,7 +90,7 @@ public class TankGame extends JPanel  {
 
     private void init() {
         this.jFrame = new JFrame("Tank Wars");
-        this.world = new BufferedImage(TankGame.SCREEN_WIDTH, TankGame.SCREEN_HEIGHT, BufferedImage.TYPE_INT_RGB);
+        this.world = new BufferedImage(TankGame.WORLD_WIDTH, TankGame.WORLD_HEIGHT, BufferedImage.TYPE_INT_RGB);
         BufferedImage tankImage = null;
         BufferedImage tank2Image = null;
         BufferedImage breakableWall = null;
@@ -177,8 +176,8 @@ public class TankGame extends JPanel  {
         }
 
         // change these later, add separate tank images
-        tankOne = new Tank(200, 100, 0, 0, 0, tankImage);
-        tankTwo = new Tank(980, 600, 0, 0, 180, tank2Image);
+        tankOne = new Tank(320, 320, 0, 0, 0, tankImage);
+        tankTwo = new Tank(1696, 1696, 0, 0, 180, tank2Image);
 
         // left side control, uses WASD to move and space to shoot
         TankControl tankOneControl = new TankControl(tankOne, KeyEvent.VK_W,
@@ -198,7 +197,7 @@ public class TankGame extends JPanel  {
         this.jFrame.add(this);
         this.jFrame.addKeyListener(tankOneControl);
         this.jFrame.addKeyListener(tankTwoControl);
-        this.jFrame.setSize(TankGame.SCREEN_WIDTH, TankGame.SCREEN_HEIGHT);
+        this.jFrame.setSize(TankGame.SCREEN_WIDTH, TankGame.SCREEN_HEIGHT + 20);
         this.jFrame.setResizable(false);
         jFrame.setLocationRelativeTo(null);
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -220,6 +219,66 @@ public class TankGame extends JPanel  {
         }
     }*/
 
+    int offsetMaxX = WORLD_WIDTH - (SCREEN_WIDTH / 2);
+    int offsetMaxY = WORLD_HEIGHT - SCREEN_HEIGHT;
+    int offsetMinX = 0;
+    int offsetMinY = 0;
+
+    public int getCameraTankOneX() {
+        // divide by 4 as each player gets half the screen width originally
+        int cameraX = tankOne.getX() - (SCREEN_WIDTH / 4);
+        if (cameraX > offsetMaxX) {
+            cameraX = offsetMaxX;
+        }
+
+        else if (cameraX < offsetMinX) {
+            cameraX = offsetMinX;
+        }
+        return cameraX;
+    }
+
+    public int getCameraTankOneY() {
+        int cameraY = tankOne.getY() - (SCREEN_HEIGHT / 2);
+        if (cameraY > offsetMaxY) {
+            cameraY = offsetMaxY;
+        }
+
+        else if (cameraY < offsetMinY) {
+            cameraY = offsetMinY;
+        }
+        return cameraY;
+    }
+
+    public int getCameraTankTwoX() {
+        // divide by 4 as each player gets half the screen width originally
+        int cameraX = tankTwo.getX() - (SCREEN_WIDTH / 4);
+        if (cameraX > offsetMaxX) {
+            cameraX = offsetMaxX;
+        }
+
+        else if (cameraX < offsetMinX) {
+            cameraX = offsetMinX;
+        }
+        return cameraX;
+    }
+
+
+
+    public int getCameraTankTwoY() {
+        int cameraY = tankTwo.getY() - (SCREEN_HEIGHT / 2);
+        if (cameraY > offsetMaxY) {
+            cameraY = offsetMaxY;
+        }
+
+        else if (cameraY < offsetMinY) {
+            cameraY = offsetMinY;
+        }
+        return cameraY;
+    }
+
+
+
+
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
@@ -232,7 +291,21 @@ public class TankGame extends JPanel  {
         this.walls.forEach(wall -> wall.drawImage(buffer));
         this.tankOne.drawImage(buffer);
         this.tankTwo.drawImage(buffer);
-        g2.drawImage(world,0,0,null);
+        BufferedImage leftScreenHalf = world.getSubimage(getCameraTankOneX(), getCameraTankOneY(),
+                TankGame.SCREEN_WIDTH / 2, TankGame.SCREEN_HEIGHT);
+        BufferedImage rightScreenHalf = world.getSubimage(getCameraTankTwoX(), getCameraTankTwoY(),
+                TankGame.SCREEN_WIDTH / 2, TankGame.SCREEN_HEIGHT);
+        /*// draw black split screen border
+        buffer.setColor(Color.BLACK);
+        buffer.fillRect(TankGame.SCREEN_WIDTH / 2, 0, 4, TankGame.SCREEN_HEIGHT);*/
+        g2.drawImage(leftScreenHalf,0,0,null);
+        g2.drawImage(rightScreenHalf,TankGame.SCREEN_WIDTH / 2 + 4,0,null);
+
+
+        /*Rectangle screenBorder = new Rectangle(TankGame.SCREEN_WIDTH / 2, 0, 4, 0);
+        g2.fillRect((int) screenBorder.getX(), (int) screenBorder.getY(), (int) screenBorder.getWidth(),
+                (int) screenBorder.getHeight());*/
+
 
 
     }

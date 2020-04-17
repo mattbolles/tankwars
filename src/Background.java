@@ -1,6 +1,8 @@
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
+//draws the background and tiles it
+
 public class Background {
     int backgroundWidth, backgroundHeight;
     BufferedImage backgroundImage;
@@ -16,8 +18,8 @@ public class Background {
         Graphics2D g2d = (Graphics2D) g;
         int backgroundWidth = backgroundImage.getWidth();
         int backgroundHeight = backgroundImage.getHeight();
-        for (int y = 0; y < TankGame.SCREEN_HEIGHT; y += backgroundHeight) {
-            for (int x = 0; x < TankGame.SCREEN_WIDTH; x += backgroundWidth) {
+        for (int y = 0; y < TankGame.WORLD_HEIGHT; y += backgroundHeight) {
+            for (int x = 0; x < TankGame.WORLD_WIDTH; x += backgroundWidth) {
                 g2d.drawImage(backgroundImage, x, y, null);
             }
         }

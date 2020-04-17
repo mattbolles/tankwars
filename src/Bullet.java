@@ -5,7 +5,7 @@ import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-public class Bullet implements ActionListener {
+public class Bullet {
     int x, y, vx, vy, angle;
     // speed of bullet
     int R = 7;
@@ -13,18 +13,8 @@ public class Bullet implements ActionListener {
     Rectangle hitBox;
     boolean visible;
     boolean explosionVisible;
-    private ActionListener explosionTimerEvent;
-    private Timer explosionTimer;
 
-    // called when bullet hits wall and explosion shown
     // make a generic explosion class to go with generic weapon class
-    Timer timer = new Timer(1000, new ActionListener() {
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        setExplosionVisible(false);
-        System.out.println("explosion not visible - from timer");
-    }
-    });
 
     public Bullet(int x, int y, int angle, BufferedImage bulletImage) {
         // next 2 lines align bullet with tank
@@ -34,16 +24,11 @@ public class Bullet implements ActionListener {
         this.bulletImage = bulletImage;
         this.hitBox = new Rectangle(x, y, this.bulletImage.getWidth(), this.bulletImage.getHeight());
         visible = true;
-        explosionVisible = false;
     }
 
 
     public void setVisible(Boolean visible) {
         this.visible = visible;
-    }
-
-    public void setExplosionVisible(Boolean visible) {
-        this.explosionVisible = visible;
     }
 
 
@@ -69,26 +54,28 @@ public class Bullet implements ActionListener {
         // left border - works
         if (x < 32) {
             x = 32;
-            //setExplosionVisible(true);
+            setVisible(false);
             wallHit = true;
         }
         //
 
         // right border
-        if (x >= TankGame.SCREEN_WIDTH - 44) {
-            x = TankGame.SCREEN_WIDTH - 44;
-            //setExplosionVisible(true);
+        if (x >= TankGame.WORLD_WIDTH - 45) {
+            x = TankGame.WORLD_WIDTH - 45;
+            setVisible(false);
             wallHit = true;
         }
         //top border - works
         if (y < 32) {
             y = 32;
+            setVisible(false);
             wallHit = true;
         }
 
         // bottom border
-        if (y >= TankGame.SCREEN_HEIGHT - 60) {
-            y = TankGame.SCREEN_HEIGHT - 60;
+        if (y >= TankGame.WORLD_HEIGHT - 41) {
+            y = TankGame.WORLD_HEIGHT - 41;
+            setVisible(false);
             wallHit = true;
         }
         return wallHit;
@@ -105,39 +92,9 @@ public class Bullet implements ActionListener {
         if (isVisible()) {
             g2d.drawImage(this.bulletImage, rotation, null);
         }
-        if (checkBorder() == true) {
-            setVisible(false);
-            setExplosionVisible(true);
-            startExplosionTimer();
-            if (isExplosionVisible() == true) {
-                g2d.drawImage(TankGame.explosionSmall, x, y, null);
-            }
-        }
-
-        //timer.setRepeats(false);
-
         // draw hitbox in yellow
         g2d.setColor(Color.YELLOW);
         g2d.drawRect(x,y,this.bulletImage.getWidth(),this.bulletImage.getHeight());
     }
 
-    public void startExplosionTimer() {
-        explosionTimerEvent = new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                setExplosionVisible(false);
-                System.out.println("Explosion timer end");
-            }
-        };
-        explosionTimer = new Timer(1000, explosionTimerEvent);
-        explosionTimer.setRepeats(false);
-        explosionTimer.start();
-        System.out.println("Explosion timer start");
-    }
-
-    @Override
-    public void actionPerformed(ActionEvent e) {
-        setExplosionVisible(false);
-        System.out.println("explosion not visible - from timer2 ");
-    }
 }

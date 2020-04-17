@@ -203,9 +203,9 @@ public class Tank extends GameObject {
         }
 
         // right border
-        // number is tank width + tile width + 1
-        if (x >= TankGame.SCREEN_WIDTH - 83) {
-            x = TankGame.SCREEN_WIDTH - 83;
+        // number is tank width + tile width
+        if (x >= TankGame.WORLD_WIDTH - 82) {
+            x = TankGame.WORLD_WIDTH - 82;
         }
 
         // top border
@@ -214,9 +214,9 @@ public class Tank extends GameObject {
         }
 
         // bottom border
-        // number is tank height + tile width + 20 + 1
-        if (y >= TankGame.SCREEN_HEIGHT - 103) {
-            y = TankGame.SCREEN_HEIGHT - 103;
+        // number is tank height + tile height
+        if (y >= TankGame.WORLD_HEIGHT - 82) {
+            y = TankGame.WORLD_HEIGHT - 82;
         }
     }
 

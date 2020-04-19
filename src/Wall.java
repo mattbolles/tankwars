@@ -3,13 +3,25 @@ import java.awt.image.BufferedImage;
 
 public abstract class Wall extends GameObject {
         int x, y, height, width;
-        Rectangle hitBox = new Rectangle(x, y, width, height);
-        BufferedImage wallImage;
+        Rectangle hitBox;
+        String objectType = "wall";
 
 
         public abstract void drawImage(Graphics g);
 
-        public Rectangle getHitBox() {
-            return hitBox.getBounds();
+        public void update() {
+
         }
+
+        public String getObjectType() {
+                return "wall";
+        }
+
+        public abstract int getX();
+        public abstract int getY();
+        public abstract int getWidth();
+        public abstract int getHeight();
+
+        public abstract Rectangle getHitBox();
+
 }

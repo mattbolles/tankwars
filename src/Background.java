@@ -18,8 +18,8 @@ public class Background {
         Graphics2D g2d = (Graphics2D) g;
         int backgroundWidth = backgroundImage.getWidth();
         int backgroundHeight = backgroundImage.getHeight();
-        for (int y = 0; y < TankGame.WORLD_HEIGHT; y += backgroundHeight) {
-            for (int x = 0; x < TankGame.WORLD_WIDTH; x += backgroundWidth) {
+        for (int y = 0; y < GameInfo.WORLD_HEIGHT; y += backgroundHeight) {
+            for (int x = 0; x < GameInfo.WORLD_WIDTH; x += backgroundWidth) {
                 g2d.drawImage(backgroundImage, x, y, null);
             }
         }

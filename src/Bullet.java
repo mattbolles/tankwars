@@ -5,14 +5,18 @@ import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 
-public class Bullet {
+public class Bullet extends GameObject {
     int x, y, vx, vy, angle;
     // speed of bullet
     int R = 7;
     BufferedImage bulletImage;
+    BufferedImage explosionImage = Resource.getResourceImage("explosionSmall");
     Rectangle hitBox;
     boolean visible;
     boolean explosionVisible;
+    boolean collided = false;
+    boolean exploded = false;
+    int tickCount = 0;
 
     // make a generic explosion class to go with generic weapon class
 
@@ -22,8 +26,46 @@ public class Bullet {
         this.y = (int) (y + (25 * Math.sin(Math.toRadians(angle))) + 20);
         this.angle = angle;
         this.bulletImage = bulletImage;
-        this.hitBox = new Rectangle(x, y, this.bulletImage.getWidth(), this.bulletImage.getHeight());
+        this.hitBox = new Rectangle(x + vx, y + vy, this.bulletImage.getWidth(), this.bulletImage.getHeight());
         visible = true;
+    }
+
+    public String getObjectType() {
+        return "bullet";
+    }
+
+    @Override
+    public int getX() {
+        return this.x;
+    }
+
+    @Override
+    public int getY() {
+        return this.y;
+    }
+
+    @Override
+    public int getWidth() {
+        return this.bulletImage.getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return this.bulletImage.getHeight();
+    }
+
+    @Override
+    public void collide(GameObject objectCollidedWith) {
+        String objectCollideWithType = objectCollidedWith.getObjectType();
+        switch (objectCollideWithType) {
+            case "breakableWall":
+            case "unbreakableWall":
+                setVisible(false);
+            case "tank":
+                setVisible(false);
+            default:
+                break;
+        }
     }
 
 
@@ -46,7 +88,7 @@ public class Bullet {
         x += vx;
         y += vy;
         checkBorder();
-        this.hitBox.setLocation(x,y);
+        this.hitBox.setLocation(x + vx,y + vy);
     }
 
     public boolean checkBorder() {
@@ -60,8 +102,8 @@ public class Bullet {
         //
 
         // right border
-        if (x >= TankGame.WORLD_WIDTH - 45) {
-            x = TankGame.WORLD_WIDTH - 45;
+        if (x >= GameInfo.WORLD_WIDTH - 45) {
+            x = GameInfo.WORLD_WIDTH - 45;
             setVisible(false);
             wallHit = true;
         }
@@ -73,15 +115,35 @@ public class Bullet {
         }
 
         // bottom border
-        if (y >= TankGame.WORLD_HEIGHT - 41) {
-            y = TankGame.WORLD_HEIGHT - 41;
+        if (y >= GameInfo.WORLD_HEIGHT - 41) {
+            y = GameInfo.WORLD_HEIGHT - 41;
             setVisible(false);
             wallHit = true;
         }
         return wallHit;
     }
+
+    public boolean isExploded() {
+        return exploded;
+    }
+
     public void update() {
-        moveForwards();
+        if (visible) {
+            moveForwards();
+        }
+        else {
+            // only iterate tick count once bullet has collided so it can explode
+            tickCount++;
+            if (tickCount > 30) {
+                exploded = true;
+            }
+        }
+        this.hitBox.setLocation(x,y);
+    }
+
+    @Override
+    public Rectangle getHitBox() {
+        return hitBox.getBounds();
     }
 
     public void drawImage(Graphics g) {
@@ -91,6 +153,11 @@ public class Bullet {
         Graphics2D g2d = (Graphics2D) g;
         if (isVisible()) {
             g2d.drawImage(this.bulletImage, rotation, null);
+        }
+        else {
+            if (!exploded) {
+                g2d.drawImage(explosionImage, rotation, null);
+            }
         }
         // draw hitbox in yellow
         g2d.setColor(Color.YELLOW);

@@ -9,28 +9,37 @@ import java.util.ArrayList;
  *
  * @author anthony-pc
  */
-public class Tank extends GameObject {
+public class Tank extends GameObject{
 
 
     private int x;
     private int y;
+    private int rightCorner = x + 50;
+    private int leftCorner = y + 50;
     private int vx;
     private int vy;
     private int angle;
     private int width;
     private int height;
-
+    private int oldX;
+    private int oldY;
     // R from trig - higher the value, faster it goes
-    private final int R = 2;
+    private int R = 2;
+
+    private int health = 100;
     private final int ROTATION_SPEED = 3;
     private Rectangle hitBox; // for collision detection
     private ArrayList<Bullet> bulletList;
+    private ArrayList<Bullet> explodedBulletList;
     private BufferedImage tankImage;
     private boolean UpPressed;
     private boolean DownPressed;
     private boolean RightPressed;
     private boolean LeftPressed;
     private boolean ShootPressed;
+    String objectType = "tank";
+    private boolean isStopped = false;
+    //private TankGame tankGame;
 
 
     Tank(int x, int y, int vx, int vy, int angle, BufferedImage tankImage) {
@@ -38,18 +47,38 @@ public class Tank extends GameObject {
         this.y = y;
         this.vx = vx;
         this.vy = vy;
+        this.oldX = oldX;
+        this.oldY = oldY;
         this.tankImage = tankImage;
         this.angle = angle;
         // puts hitbox in location of tank, dimensions are same as tank image
-        this.hitBox = new Rectangle(x,y,this.tankImage.getWidth(), this.tankImage.getHeight());
+        this.hitBox = new Rectangle(x + vx,y + vy,this.tankImage.getWidth(), this.tankImage.getHeight());
         this.bulletList = new ArrayList<>();
+        this.explodedBulletList = new ArrayList<>();
+        this.objectType = objectType;
         //need to add generic weapon implementation
     }
+
+   /* void setTankGame(TankGame tankGame) {
+        this.tankGame = tankGame;
+    }*/
 
 
     public Rectangle getHitBox() {
         // return bounds of hitbox - where they can collide
         return hitBox.getBounds();
+    }
+
+    public void setSpeed(int R) {
+        this.R = R;
+    }
+
+    void setIsStopped(boolean isStopped) {
+        this.isStopped = isStopped;
+    }
+
+    public String getObjectType() {
+        return "tank";
     }
 
 
@@ -101,8 +130,47 @@ public class Tank extends GameObject {
         this.y = y;
     }
 
+    @Override
+    public void collide(GameObject objectCollidedWith) {
+        String objectCollideWithType = objectCollidedWith.getObjectType();
+        switch (objectCollideWithType) {
+            case "breakableWall":
+            case "unbreakableWall":
+                setIsStopped(true);
+            case "bullet":
+                health -= 10;
+            default:
+                break;
+        }
+        checkBorder();
+        this.hitBox.setLocation(x,y);
+    }
+
     public int getY() {
         return y;
+    }
+
+    void addBullet(int x, int y, int vx, int vy, int angle, TankGame tankGame) {
+        Bullet bullet = new Bullet(x, y, angle, Resource.getResourceImage("bullet"));
+        //tankGame.addGameObject(bullet);
+    }
+
+    @Override
+    public int getWidth() {
+        return this.tankImage.getWidth();
+    }
+
+    @Override
+    public int getHeight() {
+        return this.tankImage.getHeight();
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public int getHealth() {
+        return this.health;
     }
 
     public void setVx(int vx) {
@@ -149,15 +217,29 @@ public class Tank extends GameObject {
         }
 
         if (this.ShootPressed && TankGame.tickCounter % 20 == 0) {
-            Bullet bullet = new Bullet(x, y, angle, TankGame.bulletImage);
-            bulletList.add(bullet);
+            Bullet bullet = new Bullet(x, y, angle, Resource.getResourceImage("bullet"));
+            this.bulletList.add(bullet);
+            //this.addBullet(x, y, vx, vy, angle, tankGame);
+
         }
 
         /*if (this.ShootPressed = false) {
             TankGame.tickCounter = 20;
         }*/
-
+        this.isStopped = false;
         this.bulletList.forEach(bullet -> bullet.update());
+        for (Bullet bullet : this.bulletList) {
+                if (bullet.isExploded()) {
+                    this.explodedBulletList.add(bullet);
+                }
+        }
+        bulletList.removeAll(explodedBulletList);
+        this.hitBox.setLocation(x + vx,y + vy);
+
+    }
+
+    public ArrayList<Bullet> getBulletList() {
+        return this.bulletList;
     }
 
     private void rotateLeft() {
@@ -171,21 +253,31 @@ public class Tank extends GameObject {
     private void moveBackwards() {
         vx = (int) Math.round(R * Math.cos(Math.toRadians(angle)));
         vy = (int) Math.round(R * Math.sin(Math.toRadians(angle)));
-        x -= vx;
-        y -= vy;
+        if (!isStopped) {
+            x -= vx;
+            y -= vy;
+        }
         // makes sure doesn't go out of bounds
         checkBorder();
         // update hitbox location
-        this.hitBox.setLocation(x,y);
+        this.hitBox.setLocation(x + vx,y + vy);
     }
 
     private void moveForwards() {
         vx = (int) Math.round(R * Math.cos(Math.toRadians(angle)));
         vy = (int) Math.round(R * Math.sin(Math.toRadians(angle)));
-        x += vx;
-        y += vy;
+        if (!isStopped) {
+            x += vx;
+            y += vy;
+        }
         checkBorder();
-        this.hitBox.setLocation(x,y);
+        // take into account momentum to prevent tank from getting stuck
+        this.hitBox.setLocation(x+vx ,y+vy);
+    }
+
+
+    public int getAngle() {
+        return this.angle;
     }
 
     private void shoot() {
@@ -204,8 +296,8 @@ public class Tank extends GameObject {
 
         // right border
         // number is tank width + tile width
-        if (x >= TankGame.WORLD_WIDTH - 82) {
-            x = TankGame.WORLD_WIDTH - 82;
+        if (x >= GameInfo.WORLD_WIDTH - 82) {
+            x = GameInfo.WORLD_WIDTH - 82;
         }
 
         // top border
@@ -215,9 +307,10 @@ public class Tank extends GameObject {
 
         // bottom border
         // number is tank height + tile height
-        if (y >= TankGame.WORLD_HEIGHT - 82) {
-            y = TankGame.WORLD_HEIGHT - 82;
+        if (y >= GameInfo.WORLD_HEIGHT - 82) {
+            y = GameInfo.WORLD_HEIGHT - 82;
         }
+
     }
 
     @Override

@@ -39,10 +39,11 @@ public class Tank extends GameObject{
     private boolean ShootPressed;
     String objectType = "tank";
     private boolean isStopped = false;
-    //private TankGame tankGame;
+    private TankGame tankGame;
+    private String owner;
 
 
-    Tank(int x, int y, int vx, int vy, int angle, BufferedImage tankImage) {
+    Tank(int x, int y, int vx, int vy, int angle, BufferedImage tankImage, String owner, TankGame tankGame) {
         this.x = x;
         this.y = y;
         this.vx = vx;
@@ -51,6 +52,8 @@ public class Tank extends GameObject{
         this.oldY = oldY;
         this.tankImage = tankImage;
         this.angle = angle;
+        this.owner = owner;
+        this.tankGame = tankGame;
         // puts hitbox in location of tank, dimensions are same as tank image
         this.hitBox = new Rectangle(x + vx,y + vy,this.tankImage.getWidth(), this.tankImage.getHeight());
         this.bulletList = new ArrayList<>();
@@ -59,9 +62,9 @@ public class Tank extends GameObject{
         //need to add generic weapon implementation
     }
 
-   /* void setTankGame(TankGame tankGame) {
+   void setTankGame(TankGame tankGame) {
         this.tankGame = tankGame;
-    }*/
+    }
 
 
     public Rectangle getHitBox() {
@@ -131,17 +134,8 @@ public class Tank extends GameObject{
     }
 
     @Override
-    public void collide(GameObject objectCollidedWith) {
-        String objectCollideWithType = objectCollidedWith.getObjectType();
-        switch (objectCollideWithType) {
-            case "breakableWall":
-            case "unbreakableWall":
-                setIsStopped(true);
-            case "bullet":
-                health -= 10;
-            default:
-                break;
-        }
+    public void collide() {
+        setIsStopped(true);
         checkBorder();
         this.hitBox.setLocation(x,y);
     }
@@ -151,7 +145,7 @@ public class Tank extends GameObject{
     }
 
     void addBullet(int x, int y, int vx, int vy, int angle, TankGame tankGame) {
-        Bullet bullet = new Bullet(x, y, angle, Resource.getResourceImage("bullet"));
+        Bullet bullet = new Bullet(x, y, angle, Resource.getResourceImage("bullet"), owner);
         //tankGame.addGameObject(bullet);
     }
 
@@ -167,6 +161,10 @@ public class Tank extends GameObject{
 
     public void setHealth(int health) {
         this.health = health;
+    }
+
+    public void bulletDamage() {
+        this.health -= 10;
     }
 
     public int getHealth() {
@@ -197,6 +195,14 @@ public class Tank extends GameObject{
         return DownPressed;
     }
 
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public String getOwner() {
+        return this.owner;
+    }
+
 
 
     //every game loop this runs
@@ -217,9 +223,8 @@ public class Tank extends GameObject{
         }
 
         if (this.ShootPressed && TankGame.tickCounter % 20 == 0) {
-            Bullet bullet = new Bullet(x, y, angle, Resource.getResourceImage("bullet"));
-            this.bulletList.add(bullet);
-            //this.addBullet(x, y, vx, vy, angle, tankGame);
+            Bullet bullet = new Bullet(x + vx, y + vy, angle, Resource.getResourceImage("bullet"), owner);
+            tankGame.addGameObject(bullet);
 
         }
 
@@ -227,13 +232,13 @@ public class Tank extends GameObject{
             TankGame.tickCounter = 20;
         }*/
         this.isStopped = false;
-        this.bulletList.forEach(bullet -> bullet.update());
+        /*this.bulletList.forEach(bullet -> bullet.update());
         for (Bullet bullet : this.bulletList) {
                 if (bullet.isExploded()) {
                     this.explodedBulletList.add(bullet);
                 }
         }
-        bulletList.removeAll(explodedBulletList);
+        bulletList.removeAll(explodedBulletList);*/
         this.hitBox.setLocation(x + vx,y + vy);
 
     }
@@ -317,6 +322,33 @@ public class Tank extends GameObject{
     public String toString() {
         return "x=" + x + ", y=" + y + ", angle=" + angle;
     }
+
+    public int getCameraTankOneX() {
+        // get 1st tank
+        // divide by 4 as each player gets half the screen width originally
+        int cameraX = this.getX() - (GameInfo.SCREEN_WIDTH / 4);
+        if (cameraX > GameInfo.offsetMaxX) {
+            cameraX = GameInfo. offsetMaxX;
+        }
+
+        else if (cameraX < GameInfo.offsetMinX) {
+            cameraX = GameInfo.offsetMinX;
+        }
+        return cameraX;
+    }
+
+    public int getCameraTankOneY() {
+        int cameraY = this.getY() - (GameInfo.SCREEN_HEIGHT / 2);
+        if (cameraY > GameInfo.offsetMaxY) {
+            cameraY = GameInfo.offsetMaxY;
+        }
+
+        else if (cameraY < GameInfo.offsetMinY) {
+            cameraY = GameInfo.offsetMinY;
+        }
+        return cameraY;
+    }
+
 
 
     @Override

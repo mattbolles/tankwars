@@ -44,7 +44,7 @@ public class BreakableWall extends Wall{
     }
 
     @Override
-    public void collide(GameObject objectCollidedWith) {
+    public void collide() {
 
     }
 

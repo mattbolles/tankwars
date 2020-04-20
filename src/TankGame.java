@@ -44,6 +44,10 @@ public class TankGame extends JPanel  {
     static long tickCounter = 0;
     SoundPlayer soundPlayer;
     ArrayList<GameObject> gameObjects;
+    Tank tankOne = new Tank(320, 320, 0, 0, 0, Resource.getResourceImage("tankOne"), "tankOne", this);
+    Tank tankTwo = new Tank(1696, 1696, 0, 0, 180, Resource.getResourceImage("tankTwo"), "tankTwo", this);
+
+
 
     static CollisionDetection collisionDetector = new CollisionDetection();
 
@@ -56,12 +60,17 @@ public class TankGame extends JPanel  {
 
             while (true) {
                 Rectangle collision;
-                Tank tankOne = (Tank) tankGame.gameObjects.get(tankGame.gameObjects.size() - 2);
-                Tank tankTwo = (Tank) tankGame.gameObjects.get(tankGame.gameObjects.size() - 1);
-                ArrayList<Bullet> tankOneBulletList = tankOne.getBulletList();
-                ArrayList<Bullet> tankTwoBulletList = tankTwo.getBulletList();
-                tankGame.gameObjects.forEach(gameObject -> gameObject.update());
-                for (GameObject currentGameObject : tankGame.gameObjects) {
+                /*ArrayList<Bullet> tankOneBulletList = tankOne.getBulletList();
+                ArrayList<Bullet> tankTwoBulletList = tankTwo.getBulletList();*/
+                //tankGame.tankOne.update();
+                //tankGame.tankTwo.update();
+
+                //tankGame.gameObjects.forEach(gameObject -> gameObject.update());
+                for (int i = 0; i < tankGame.gameObjects.size(); i++) {
+                    tankGame.gameObjects.get(i).update();
+                }
+
+                /*for (GameObject currentGameObject : tankGame.gameObjects) {
                     //System.out.println("Current object: " + object.getObjectType());
                     Rectangle t1 = tankOne.getHitBox();
                     Rectangle t2 = tankTwo.getHitBox();
@@ -69,8 +78,8 @@ public class TankGame extends JPanel  {
 
                     if (!currentGameObject.getObjectType().equalsIgnoreCase("tank")) {
                         if (objectRect.intersects(t1)) {
-                            /*System.out.println("t1 intersects " + currentGameObject.getObjectType() + " located at " + currentGameObject.getX() +
-                                            ", " + currentGameObject.getY() + ". Tank is at " + t1.getX() + ", " + t1.getY());*/
+                            *//*System.out.println("t1 intersects " + currentGameObject.getObjectType() + " located at " + currentGameObject.getX() +
+                                            ", " + currentGameObject.getY() + ". Tank is at " + t1.getX() + ", " + t1.getY());*//*
                             tankOne.collide(currentGameObject);
 
                         }
@@ -81,13 +90,13 @@ public class TankGame extends JPanel  {
 
 
                         //check all other collisions
-                        /*for (GameObject anotherGameObject : tankGame.gameObjects) {
+                        *//*for (GameObject anotherGameObject : tankGame.gameObjects) {
                             if (!currentGameObject.equals(anotherGameObject)) {
                                 if (collisionDetector.isCollisionDetected(currentGameObject, anotherGameObject)) {
                                     currentGameObject.collide(anotherGameObject);
                                 }
                             }
-                        }*/
+                        }*//*
                     }
                     else {
                         for (Bullet bullet : tankOneBulletList) {
@@ -100,7 +109,7 @@ public class TankGame extends JPanel  {
                     }
 
 
-                }
+                }*/
                 tankGame.repaint();
                 tickCounter++;
               //  System.out.println(tankGame.t1);
@@ -164,10 +173,11 @@ public class TankGame extends JPanel  {
             System.out.println(ex.getMessage());
         }
 
-        Tank tankOne = new Tank(320, 320, 0, 0, 0, Resource.getResourceImage("tankOne"));
-        Tank tankTwo = new Tank(1696, 1696, 0, 0, 180, Resource.getResourceImage("tankTwo"));
 
-
+        this.gameObjects.add(tankOne);
+        tankOne.setTankGame(this);
+        this.gameObjects.add(tankTwo);
+        tankOne.setTankGame(this);
         // left side control, uses WASD to move and space to shoot
         TankControl tankOneControl = new TankControl(tankOne, KeyEvent.VK_W,
                 KeyEvent.VK_S,
@@ -182,8 +192,7 @@ public class TankGame extends JPanel  {
                 KeyEvent.VK_RIGHT,
                 KeyEvent.VK_ENTER);
 
-        this.gameObjects.add(tankOne);
-        this.gameObjects.add(tankTwo);
+
 
         this.jFrame.setLayout(new BorderLayout());
         this.jFrame.add(this);
@@ -218,14 +227,16 @@ public class TankGame extends JPanel  {
     int offsetMaxY = GameInfo.WORLD_HEIGHT - GameInfo.SCREEN_HEIGHT;
     int offsetMinX = 0;
     int offsetMinY = 0;
+    
 
     public int getTankHealth(String tank) {
         int tankHealth;
-        Tank tankOne = (Tank) this.gameObjects.get(this.gameObjects.size() - 2);
-        Tank tankTwo = (Tank) this.gameObjects.get(this.gameObjects.size() - 1);
+        /*Tank tankOne = (Tank) this.gameObjects.get(this.gameObjects.size() - 2);
+        Tank tankTwo = (Tank) this.gameObjects.get(this.gameObjects.size() - 1);*/
         switch (tank) {
             case "tankOne":
-               tankHealth =  tankOne.getHealth();
+
+                tankHealth =  tankOne.getHealth();
             case "tankTwo":
                 tankHealth = tankTwo.getHealth();
                 break;
@@ -236,7 +247,7 @@ public class TankGame extends JPanel  {
     }
     public int getCameraTankOneX() {
         // get 1st tank
-        Tank tankOne = (Tank) this.gameObjects.get(this.gameObjects.size() - 2);
+        //Tank tankOne = (Tank) this.gameObjects.get(this.gameObjects.size() - 2);
         // divide by 4 as each player gets half the screen width originally
         int cameraX = tankOne.getX() - (GameInfo.SCREEN_WIDTH / 4);
         if (cameraX > offsetMaxX) {
@@ -250,7 +261,7 @@ public class TankGame extends JPanel  {
     }
 
     public int getCameraTankOneY() {
-        Tank tankOne = (Tank) this.gameObjects.get(this.gameObjects.size() - 2);
+        //Tank tankOne = (Tank) this.gameObjects.get(this.gameObjects.size() - 2);
         int cameraY = tankOne.getY() - (GameInfo.SCREEN_HEIGHT / 2);
         if (cameraY > offsetMaxY) {
             cameraY = offsetMaxY;
@@ -263,7 +274,7 @@ public class TankGame extends JPanel  {
     }
 
     public int getCameraTankTwoX() {
-        Tank tankTwo = (Tank) this.gameObjects.get(this.gameObjects.size() - 1);
+        //Tank tankTwo = (Tank) this.gameObjects.get(this.gameObjects.size() - 1);
         // divide by 4 as each player gets half the screen width originally
         int cameraX = tankTwo.getX() - (GameInfo.SCREEN_WIDTH / 4);
         if (cameraX > offsetMaxX) {
@@ -279,7 +290,7 @@ public class TankGame extends JPanel  {
 
 
     public int getCameraTankTwoY() {
-        Tank tankTwo = (Tank) this.gameObjects.get(this.gameObjects.size() - 1); // gets added 2nd
+        // Tank tankTwo = (Tank) this.gameObjects.get(this.gameObjects.size() - 1); // gets added 2nd
         int cameraY = tankTwo.getY() - (GameInfo.SCREEN_HEIGHT / 2);
         if (cameraY > offsetMaxY) {
             cameraY = offsetMaxY;
@@ -305,7 +316,10 @@ public class TankGame extends JPanel  {
         // draw background tiles
         this.backgroundTile.drawImage(buffer);
         //draw all game objects
-        this.gameObjects.forEach(gameObject -> gameObject.drawImage(buffer));
+        //this.gameObjects.forEach(gameObject -> gameObject.drawImage(buffer));
+        for (int i = 0; i < this.gameObjects.size(); i++) {
+            this.gameObjects.get(i).drawImage(buffer);
+        }
         BufferedImage leftScreenHalf = world.getSubimage(getCameraTankOneX(), getCameraTankOneY(),
                 GameInfo.SCREEN_WIDTH / 2, GameInfo.SCREEN_HEIGHT);
         BufferedImage rightScreenHalf = world.getSubimage(getCameraTankTwoX(), getCameraTankTwoY(),

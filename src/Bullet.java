@@ -17,21 +17,32 @@ public class Bullet extends GameObject {
     boolean collided = false;
     boolean exploded = false;
     int tickCount = 0;
+    //track which tank shoots bullet to avoid self collision
+    String owner;
 
     // make a generic explosion class to go with generic weapon class
 
-    public Bullet(int x, int y, int angle, BufferedImage bulletImage) {
+    public Bullet(int x, int y, int angle, BufferedImage bulletImage, String owner) {
         // next 2 lines align bullet with tank
         this.x = (int) (x + (25 * Math.cos(Math.toRadians(angle))) + 20);
         this.y = (int) (y + (25 * Math.sin(Math.toRadians(angle))) + 20);
         this.angle = angle;
         this.bulletImage = bulletImage;
+        this.owner = owner;
         this.hitBox = new Rectangle(x + vx, y + vy, this.bulletImage.getWidth(), this.bulletImage.getHeight());
         visible = true;
     }
 
     public String getObjectType() {
         return "bullet";
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
+    }
+
+    public String getOwner() {
+        return this.owner;
     }
 
     @Override
@@ -55,17 +66,8 @@ public class Bullet extends GameObject {
     }
 
     @Override
-    public void collide(GameObject objectCollidedWith) {
-        String objectCollideWithType = objectCollidedWith.getObjectType();
-        switch (objectCollideWithType) {
-            case "breakableWall":
-            case "unbreakableWall":
-                setVisible(false);
-            case "tank":
-                setVisible(false);
-            default:
-                break;
-        }
+    public void collide() {
+        setVisible(false);
     }
 
 

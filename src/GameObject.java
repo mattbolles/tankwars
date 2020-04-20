@@ -33,5 +33,5 @@ public abstract class GameObject {
     public abstract int getWidth();
     public abstract int getHeight();
 
-    public abstract void collide(GameObject objectCollidedWith);
+    public abstract void collide();
 }

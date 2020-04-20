@@ -1,7 +1,9 @@
 // used to detect whether a collision happens between two game objects
+// processes all collision detecting for gameobjects
 
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.util.ArrayList;
 
 public class CollisionDetection{
 
@@ -21,7 +23,39 @@ public class CollisionDetection{
         return collisionDetected;
     }
 
-    public Rectangle getIntersection(GameObject gameObject1, GameObject gameObject2) {
-        return gameObject1.getHitBox().intersection(gameObject2.getHitBox());
+
+    public ArrayList<GameObject> processCollisions(ArrayList<GameObject> gameObjects) {
+
+        //process all game objects in list, and return completed list after done
+        for (GameObject currentGameObject : gameObjects) {
+            for (GameObject anotherGameObject : gameObjects) {
+                // make sure they're not the same
+                if (!currentGameObject.equals(anotherGameObject)) {
+                    boolean collisionDetected = isCollisionDetected(currentGameObject, anotherGameObject);
+                    // if collision is detected between the two
+                    if (collisionDetected) {
+                        if (currentGameObject instanceof Tank) {
+                            //check what kind of object tank collides with
+                            switch (anotherGameObject.getObjectType()) {
+                                case "breakableWall":
+                                case "unbreakableWall":
+                                case "tank":
+                                    ((Tank) currentGameObject).setIsStopped(true);
+                                case "bullet":
+                                    String tankOwner = ((Tank) currentGameObject).getOwner();
+                                    String bulletOwner = ((Bullet) anotherGameObject).getOwner();
+                                    if (!tankOwner.equalsIgnoreCase(bulletOwner)) {
+                                        ((Tank) currentGameObject).bulletDamage();
+                                    }
+                                default:
+                                    break;
+
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return gameObjects;
     }
 }

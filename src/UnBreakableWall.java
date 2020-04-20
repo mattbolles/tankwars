@@ -17,7 +17,7 @@ public class UnBreakableWall extends Wall {
     }
 
     @Override
-    public void collide(GameObject objectCollidedWith) {
+    public void collide() {
 
     }
 

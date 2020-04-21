@@ -30,7 +30,7 @@ public class CollisionDetection{
         for (int currentGameObjectIndex = 0; currentGameObjectIndex < gameObjects.size(); currentGameObjectIndex++) {
 
 
-            for (int anotherGameObjectIndex = currentGameObjectIndex; anotherGameObjectIndex < gameObjects.size(); anotherGameObjectIndex++) {
+            for (int anotherGameObjectIndex = 0; anotherGameObjectIndex < gameObjects.size(); anotherGameObjectIndex++) {
                 // for readability
                 GameObject currentGameObject = gameObjects.get(currentGameObjectIndex);
                 GameObject anotherGameObject = gameObjects.get(anotherGameObjectIndex);
@@ -44,139 +44,57 @@ public class CollisionDetection{
                         // if tank colliding with something
                         if (currentGameObject instanceof Tank) {
                             if (anotherGameObject instanceof Tank) {
-                                System.out.println("First object type: " + currentGameObject.getObjectType() + currentGameObject.toString() +
-                                        " Second object" +
-                                        " type: " + anotherGameObject.getObjectType() + anotherGameObject.toString());
                                 ((Tank) currentGameObject).setIsStopped(true);
                                 ((Tank) anotherGameObject).setIsStopped(true);
                             }
 
                             else if (anotherGameObject instanceof Bullet) {
-                                System.out.println("First object type: " + currentGameObject.getObjectType() + "Second object" +
-                                        " type: " + anotherGameObject.getObjectType());
-                                ((Tank) currentGameObject).damageTank();
                                 String tankOwner = ((Tank) currentGameObject).getOwner();
                                 String bulletOwner = ((Bullet) anotherGameObject).getOwner();
                                 // if the bullet is not from the same tank, damage that tank
                                 if (!bulletOwner.equals(tankOwner)) {
-                                    ((Tank) currentGameObject).damageTank();
+                                    ((Tank) currentGameObject).damageTank(5);
+                                    ((Bullet) anotherGameObject).setVisible(false);
                                 }
-                                ((Bullet) anotherGameObject).setVisible(false);
+
                             }
 
                             else if (anotherGameObject instanceof UnBreakableWall) {
-                                System.out.println("First object type: " + currentGameObject.getObjectType() + "Second object" +
-                                        " type: " + anotherGameObject.getObjectType());
                                 ((Tank) currentGameObject).setIsStopped(true);
                             }
 
                             else if (anotherGameObject instanceof BreakableWall) {
-                                System.out.println("First object type: " + currentGameObject.getObjectType() + "Second object" +
-                                        " type: " + anotherGameObject.getObjectType());
                                 ((Tank) currentGameObject).setIsStopped(true);
-                                ((BreakableWall) anotherGameObject).damageWall();
+                                ((BreakableWall) anotherGameObject).damageWall(5);
                             }
                         }
 
-                        /*switch (currentGameObject.getObjectType()) {
-                            case "tank":
-                                //System.out.println("tank case reached");
-                                //System.out.println("Current game object: " + currentGameObject.getObjectType());
-                                //System.out.println("Other game object: " + anotherGameObject.getObjectType());
-                                //check what kind of object tank collides with
-                                switch (anotherGameObject.getObjectType()) {
-                                    case "breakableWall":
-                                        ((Tank) currentGameObject).setIsStopped(true);
-                                        //((BreakableWall) anotherGameObject).damageWall();
-                                        break;
-                                    case "unbreakableWall":
-                                        ((Tank) currentGameObject).setIsStopped(true);
-                                        break;
-                                    case "tank":
-                                        //if they collide, they both stop and are damaged
-                                        ((Tank) currentGameObject).setIsStopped(true);
-                                        ((Tank) currentGameObject).damageTank();
-                                        ((Tank) anotherGameObject).setIsStopped(true);
-                                        ((Tank) anotherGameObject).damageTank();
-                                        break;
-
-                                    case "bullet":
-                                        String tankOwner = ((Tank) currentGameObject).getOwner();
-                                        assert anotherGameObject instanceof Bullet;
-                                        String bulletOwner = ((Bullet) anotherGameObject).getOwner();
-                                        // if the bullet is not from the same tank, damage that tank
-                                        if (!bulletOwner.equals(tankOwner)) {
-                                            ((Tank) currentGameObject).damageTank();
-                                        }
-                                        ((Bullet) anotherGameObject).setVisible(false);
-                                        break;
-                                    default:
-                                        break;
-
+                        // if bullet collides with something
+                        else if (currentGameObject instanceof Bullet) {
+                            if (anotherGameObject instanceof Tank) {
+                                String bulletOwner = ((Bullet) currentGameObject).getOwner();
+                                String tankOwner = ((Tank) anotherGameObject).getOwner();
+                                // if the bullet is not from the same tank, damage that tank
+                                if (!bulletOwner.equals(tankOwner)) {
+                                    ((Tank) anotherGameObject).damageTank(5);
+                                    ((Bullet) currentGameObject).setVisible(false);
                                 }
-                                break;
-                            case "bullet":
-                                //System.out.println("bullet case reached");
-                                //System.out.println("Current game object: " + currentGameObject.getObjectType());
-                                //System.out.println("Other game object: " + anotherGameObject.getObjectType());
-                                switch (anotherGameObject.getObjectType()) {
-                                    case "breakableWall":
-                                        ((Bullet) currentGameObject).setVisible(false);
-                                        ((BreakableWall) anotherGameObject).damageWall();
-                                        break;
-                                    case "unbreakableWall":
-                                        ((Bullet) currentGameObject).setVisible(false);
-                                        break;
-                                    case "tank":
-                                        String tankOwner = ((Tank) currentGameObject).getOwner();
-                                        String bulletOwner = ((Bullet) anotherGameObject).getOwner();
-                                        // if the bullet is not from the same tank, damage that tank
-                                        if (!bulletOwner.equals(tankOwner)) {
-                                            ((Tank) currentGameObject).damageTank();
-                                        }
-                                        break;
-                                    case "default":
-                                        break;
-                                }
+                            }
 
-                                break;
+                            else if (anotherGameObject instanceof Bullet) {
+                                ((Bullet) currentGameObject).setVisible(false);
+                                ((Bullet) anotherGameObject).setVisible(false);
+                            }
 
-                            case "unbreakableWall":
-                                //System.out.println("unbreakable wall case reached");
-                                //System.out.println("Current game object: " + currentGameObject.getObjectType());
-                                //System.out.println("Other game object: " + anotherGameObject.getObjectType());
-                                switch (anotherGameObject.getObjectType()) {
-                                    case "tank":
-                                        ((Tank) anotherGameObject).setIsStopped(true);
-                                        break;
-                                    case "bullet":
-                                        assert anotherGameObject instanceof Bullet;
-                                        ((Bullet) anotherGameObject).setVisible(false);
-                                        break;
-                                    case "default":
-                                        break;
-                                }
+                            else if (anotherGameObject instanceof UnBreakableWall) {
+                                ((Bullet) currentGameObject).setVisible(false);
+                            }
 
-                                break;
-                            case "breakableWall":
-                                //System.out.println("unbreakable wall case reached");
-                                //System.out.println("Current game object: " + currentGameObject.getObjectType());
-                                //System.out.println("Other game object: " + anotherGameObject.getObjectType());
-                                switch (anotherGameObject.getObjectType()) {
-                                    case "tank":
-                                        ((Tank) anotherGameObject).setIsStopped(true);
-                                        ((BreakableWall) currentGameObject).damageWall();
-                                        break;
-                                    case "bullet":
-                                        ((Bullet) anotherGameObject).setVisible(false);
-                                        ((BreakableWall) currentGameObject).damageWall();
-                                        break;
-                                    case "default":
-                                        break;
-                                }
-
-                                break;
-                        }*/
+                            else if (anotherGameObject instanceof BreakableWall) {
+                                ((Bullet) currentGameObject).setVisible(false);
+                                ((BreakableWall) anotherGameObject).damageWall(5);
+                            }
+                        }
 
 
                     }

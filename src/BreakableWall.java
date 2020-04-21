@@ -8,7 +8,11 @@ public class BreakableWall extends Wall{
     int health = 25; // the wall sustains damage, much like a tank. when health reaches 0, it is destroyed
     CollisionDetection collisionDetection;
     BufferedImage wallImage;
+    int tickCount = 0;
+    int explosionTickCount = 0;
     String objectType = "breakableWall";
+    boolean damaged = false;
+    boolean exploded = false;
 
     public BreakableWall(int x, int y, BufferedImage wallImage) {
         this.x = x;
@@ -20,19 +24,8 @@ public class BreakableWall extends Wall{
     }
 
 
-   /* // add later
-    public void stateUpdate(int state) {
-        if (state == 1) {
-            this.wallImage = Resource.getResourceImage("breakableWallDamaged");
-        }
-
-        if (state < 1) {
-            destroy();
-        }
-    }
-*/
-    public void destroy() {
-
+    public void setTickCount(int tickCount) {
+        this.tickCount = tickCount;
     }
 
     public void setHealth(int health) {
@@ -40,7 +33,15 @@ public class BreakableWall extends Wall{
     }
 
     public int getHealth() {
-        return this.health;
+        return health;
+    }
+
+    public void setExploded(boolean exploded) {
+        this.exploded = exploded;
+    }
+
+    public boolean isExploded() {
+        return this.exploded;
     }
 
     public String getObjectType() {
@@ -61,22 +62,36 @@ public class BreakableWall extends Wall{
     public void drawImage(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
         // if wall is damaged, show broken wall instead
-        if (getHealth() < 25) {
-            g2.drawImage(Resource.getResourceImage("breakableWallDamaged"), x, y, null);
+        if (getHealth() == 25) {
+            g2.drawImage(Resource.getResourceImage("breakableWall"), x, y, null);
         }
         else {
-            g2.drawImage(this.wallImage, x, y, null);
+            if (!isExploded()) {
+                g2.drawImage(Resource.getResourceImage("breakableWallDamaged"), x, y, null);
+            }
         }
 
     }
 
     @Override
     public void update() {
-
+        if (getHealth() == 0) {
+            explosionTickCount++;
+            if (explosionTickCount > 50) {
+                setExploded(true);
+            }
+        }
     }
 
-    public void damageWall() {
-        health -= 5;
+    public void damageWall(int damage) {
+        // tickcount prevents damage from being continous
+        if (tickCount == 0) {
+            health -= damage;
+        }
+        tickCount++;
+        if (tickCount >= 20) {
+            setTickCount(0);
+        }
     }
 
     @Override

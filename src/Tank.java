@@ -27,6 +27,7 @@ public class Tank extends GameObject{
     private int R = 2;
 
     private int health = 100;
+    private int healthTickCount = 0;
     private final int ROTATION_SPEED = 3;
     private Rectangle hitBox; // for collision detection
     private ArrayList<Bullet> bulletList;
@@ -133,6 +134,10 @@ public class Tank extends GameObject{
         this.y = y;
     }
 
+    public void setHealthTickCount(int healthTickCount) {
+        this.healthTickCount = healthTickCount;
+    }
+
     @Override
     public void collide() {
         setIsStopped(true);
@@ -163,8 +168,16 @@ public class Tank extends GameObject{
         this.health = health;
     }
 
-    public void damageTank() {
-        health -= 5;
+    public void damageTank(int damage) {
+            // tickcount prevents damage from being continous
+            if (healthTickCount == 0) {
+                health -= damage;
+            }
+            healthTickCount++;
+            // reset to make sure it can be damaged again
+            if (healthTickCount >= 20) {
+                setHealthTickCount(0);
+            }
     }
 
     public int getHealth() {

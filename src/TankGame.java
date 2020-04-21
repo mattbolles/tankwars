@@ -66,8 +66,9 @@ public class TankGame extends JPanel  {
                 //tankGame.tankTwo.update();
 
                 //tankGame.gameObjects.forEach(gameObject -> gameObject.update());
-                tankGame.repaint();
+
                 for (int currentGameObjectIndex = 0; currentGameObjectIndex < tankGame.gameObjects.size(); currentGameObjectIndex++) {
+                    tankGame.repaint();
                     //System.out.println(tankGame.gameObjects.size());
                     //System.out.println(currentGameObjectIndex);
                     GameObject currentGameObject = tankGame.gameObjects.get(currentGameObjectIndex);
@@ -78,6 +79,12 @@ public class TankGame extends JPanel  {
                             currentGameObjectIndex--;
                         } else {
                             currentGameObject.update();
+                        }
+                    }
+
+                    if (currentGameObject instanceof BreakableWall) {
+                        if (((BreakableWall) currentGameObject).getHealth() <= 0) {
+                            tankGame.gameObjects.remove(currentGameObjectIndex);
                         }
                     }
                 }

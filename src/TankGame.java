@@ -41,18 +41,30 @@ public class TankGame extends JPanel  {
     String tankOneCurrentPowerUp = "None";
     String TankTwoCurrentPowerUp = "None";
     static long tickCounter = 0;
+    static GameInfo.GameState state;
     SoundPlayer soundPlayer;
     ArrayList<GameObject> gameObjects;
-    Tank tankOne = new Tank(320, 320, 0, 0, 0, Resource.getResourceImage("tankOne"), "tankOne", this);
-    Tank tankTwo = new Tank(1696, 1696, 0, 0, 180, Resource.getResourceImage("tankTwo"), "tankTwo", this);
+    Tank tankOne = new Tank(GameInfo.tankOneXSpawnCoord, GameInfo.tankOneYSpawnCoord, 0, 0, 0, Resource.getResourceImage("tankOne"),
+            "tankOne", this);
+    Tank tankTwo = new Tank(GameInfo.tankTwoXSpawnCoord, GameInfo.tankTwoYSpawnCoord,0, 0, 180,
+            Resource.getResourceImage("tankTwo"), "tankTwo", this);
 
 
 
     static CollisionDetection collisionDetector = new CollisionDetection();
 
+    public void run() {
+        switch (state) {
+            case START:
+                //startScreen();
+            case RUNNING:
+                gameLoop();
 
+        }
+    }
 
-    public static void main(String[] args) {
+    public void gameLoop() {
+        state = GameInfo.GameState.RUNNING;
         TankGame tankGame = new TankGame();
         tankGame.init();
         try {
@@ -65,9 +77,9 @@ public class TankGame extends JPanel  {
                 //tankGame.tankTwo.update();
 
                 //tankGame.gameObjects.forEach(gameObject -> gameObject.update());
-
+                tankGame.repaint();
                 for (int currentGameObjectIndex = 0; currentGameObjectIndex < tankGame.gameObjects.size(); currentGameObjectIndex++) {
-                    tankGame.repaint();
+
                     //System.out.println(tankGame.gameObjects.size());
                     //System.out.println(currentGameObjectIndex);
                     GameObject currentGameObject = tankGame.gameObjects.get(currentGameObjectIndex);
@@ -81,11 +93,106 @@ public class TankGame extends JPanel  {
                         }
                     }
 
-                    if (currentGameObject instanceof BreakableWall) {
+                    else if (currentGameObject instanceof BreakableWall) {
                         if (((BreakableWall) currentGameObject).getHealth() <= 0) {
                             tankGame.gameObjects.remove(currentGameObjectIndex);
                         }
                     }
+
+                    else if (currentGameObject instanceof Tank) {
+                        if (((Tank) currentGameObject).getHealth() <= 0) {
+                            // if tank is not dead
+                            if (!((Tank) currentGameObject).completelyKilled) {
+                                ((Tank) currentGameObject).killTank();
+                            }
+
+                            else {
+                                // game over
+                                if ("tankTwo".equals(((Tank) currentGameObject).getOwner())) {
+                                    //p1 wins
+                                }
+
+                                else {
+                                    //p2 wins
+                                }
+
+                            }
+
+                        }
+                    }
+
+                }
+                tankGame.gameObjects = collisionDetector.processCollisions(tankGame.gameObjects);
+
+                for (int i = 0; i < tankGame.gameObjects.size(); i++) {
+                    tankGame.gameObjects.get(i).update();
+                }
+                tickCounter++;
+                Thread.sleep(1000 / 144);
+            }
+        } catch (InterruptedException ignored) {
+            System.out.println(ignored);
+        }
+    }
+
+    // make this gameLoop() or something later
+    public static void main(String[] args) {
+        TankGame tankGame = new TankGame();
+        tankGame.init();
+        try {
+
+            while (true) {
+                Rectangle collision;
+                /*ArrayList<Bullet> tankOneBulletList = tankOne.getBulletList();
+                ArrayList<Bullet> tankTwoBulletList = tankTwo.getBulletList();*/
+                //tankGame.tankOne.update();
+                //tankGame.tankTwo.update();
+
+                //tankGame.gameObjects.forEach(gameObject -> gameObject.update());
+                tankGame.repaint();
+                for (int currentGameObjectIndex = 0; currentGameObjectIndex < tankGame.gameObjects.size(); currentGameObjectIndex++) {
+
+                    //System.out.println(tankGame.gameObjects.size());
+                    //System.out.println(currentGameObjectIndex);
+                    GameObject currentGameObject = tankGame.gameObjects.get(currentGameObjectIndex);
+                    if (currentGameObject instanceof Bullet) {
+                        // if bullet is exploded already
+                        if (((Bullet) currentGameObject).isExploded()) {
+                            tankGame.gameObjects.remove(currentGameObjectIndex);
+                            currentGameObjectIndex--;
+                        } else {
+                            currentGameObject.update();
+                        }
+                    }
+
+                    else if (currentGameObject instanceof BreakableWall) {
+                        if (((BreakableWall) currentGameObject).getHealth() <= 0) {
+                            tankGame.gameObjects.remove(currentGameObjectIndex);
+                        }
+                    }
+
+                    else if (currentGameObject instanceof Tank) {
+                        if (((Tank) currentGameObject).getHealth() <= 0) {
+                            // if tank is not dead
+                            if (!((Tank) currentGameObject).completelyKilled) {
+                                ((Tank) currentGameObject).killTank();
+                            }
+
+                            else {
+                               // game over
+                               if ("tankTwo".equals(((Tank) currentGameObject).getOwner())) {
+                                   //p1 wins
+                               }
+
+                               else {
+                                   //p2 wins
+                               }
+
+                            }
+
+                        }
+                    }
+
                 }
                 tankGame.gameObjects = collisionDetector.processCollisions(tankGame.gameObjects);
 
@@ -270,7 +377,7 @@ public class TankGame extends JPanel  {
         //g2.drawString(playerOneHealth, 1075, 820);
         g2.setColor(Color.WHITE);
         //g2.drawString(playerOneLives, 450, 1020);
-        for (int i = 0; i < tankOneLives; i++) {
+        for (int i = 0; i < tankOne.getLives(); i++) {
                 g2.drawImage(Resource.getResourceImage("tank1life"), 45 + (37 * i), 90, null);
         }
 
@@ -293,7 +400,7 @@ public class TankGame extends JPanel  {
         //g2.drawString(playerOneHealth, 1075, 820);
         g2.setColor(Color.WHITE);
         //g2.drawString(playerOneLives, 450, 1020);
-        for (int i = 0; i < tankTwoLives; i++) {
+        for (int i = 0; i < tankTwo.getLives(); i++) {
             g2.drawImage(Resource.getResourceImage("tank2life"), GameInfo.SCREEN_WIDTH - 145 + (37 * i),
                     GameInfo.SCREEN_HEIGHT - 80, null);
         }

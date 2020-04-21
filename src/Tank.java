@@ -42,6 +42,8 @@ public class Tank extends GameObject{
     private boolean isStopped = false;
     private TankGame tankGame;
     private String owner;
+    int lives = 3;
+    boolean completelyKilled = false;
 
 
     Tank(int x, int y, int vx, int vy, int angle, BufferedImage tankImage, String owner, TankGame tankGame) {
@@ -67,6 +69,10 @@ public class Tank extends GameObject{
         this.tankGame = tankGame;
     }
 
+    void setAngle(int angle) {
+        this.angle = angle;
+    }
+
 
     public Rectangle getHitBox() {
         // return bounds of hitbox - where they can collide
@@ -75,6 +81,43 @@ public class Tank extends GameObject{
 
     public void setSpeed(int R) {
         this.R = R;
+    }
+
+    int getLives() {
+        return lives;
+    }
+
+    void setLives(int lives) {
+        this.lives = lives;
+    }
+
+    void killTank() {
+        if (lives > 0) {
+            //respawn
+            if ("tankOne".equals(this.getOwner())) {
+                this.setX(GameInfo.tankOneXSpawnCoord);
+                this.setY(GameInfo.tankOneYSpawnCoord);
+                this.setAngle(0);
+            }
+
+            else {
+                this.setX(GameInfo.tankTwoXSpawnCoord);
+                this.setY(GameInfo.tankTwoYSpawnCoord);
+                this.setAngle(180);
+            }
+            this.setVx(0);
+            this.setVy(0);
+            this.setHealth(100);
+            lives--;
+        }
+
+        else {
+            completelyKilled = true;
+        }
+    }
+
+    boolean getCompletelyKilled() {
+        return completelyKilled;
     }
 
     void setIsStopped(boolean isStopped) {

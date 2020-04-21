@@ -66,9 +66,30 @@ public class TankGame extends JPanel  {
                 //tankGame.tankTwo.update();
 
                 //tankGame.gameObjects.forEach(gameObject -> gameObject.update());
-                for (int i = 0; i < tankGame.gameObjects.size(); i++) {
-                    tankGame.gameObjects.get(i).update();
+                tankGame.repaint();
+                for (int currentGameObjectIndex = 0; currentGameObjectIndex < tankGame.gameObjects.size(); currentGameObjectIndex++) {
+                    //System.out.println(tankGame.gameObjects.size());
+                    //System.out.println(currentGameObjectIndex);
+                    GameObject currentGameObject = tankGame.gameObjects.get(currentGameObjectIndex);
+                    if (currentGameObject instanceof Bullet) {
+                        // if bullet is exploded already
+                        if (((Bullet) currentGameObject).isExploded()) {
+                            tankGame.gameObjects.remove(currentGameObjectIndex);
+                            currentGameObjectIndex--;
+                        } else {
+                            currentGameObject.update();
+                        }
+                    }
                 }
+                tankGame.gameObjects = collisionDetector.processCollisions(tankGame.gameObjects);
+
+                for (int i = 0; i < tankGame.gameObjects.size(); i++) {
+                tankGame.gameObjects.get(i).update();
+                }
+                //tankGame.tankOne.update();
+                //tankGame.tankTwo.update();
+
+
 
                 /*for (GameObject currentGameObject : tankGame.gameObjects) {
                     //System.out.println("Current object: " + object.getObjectType());
@@ -110,9 +131,9 @@ public class TankGame extends JPanel  {
 
 
                 }*/
-                tankGame.repaint();
+
                 tickCounter++;
-              //  System.out.println(tankGame.t1);
+                //  System.out.println(tankGame.t1);
                 Thread.sleep(1000 / 144);
             }
         } catch (InterruptedException ignored) {

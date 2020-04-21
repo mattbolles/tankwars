@@ -17,6 +17,7 @@ public class Bullet extends GameObject {
     boolean collided = false;
     boolean exploded = false;
     int tickCount = 0;
+    String objectType = "bullet";
     //track which tank shoots bullet to avoid self collision
     String owner;
 
@@ -34,7 +35,7 @@ public class Bullet extends GameObject {
     }
 
     public String getObjectType() {
-        return "bullet";
+        return objectType;
     }
 
     public void setOwner(String owner) {
@@ -73,6 +74,10 @@ public class Bullet extends GameObject {
 
     public void setVisible(Boolean visible) {
         this.visible = visible;
+    }
+
+    public void setExploded(boolean exploded) {
+        this.exploded = exploded;
     }
 
 
@@ -137,7 +142,7 @@ public class Bullet extends GameObject {
             // only iterate tick count once bullet has collided so it can explode
             tickCount++;
             if (tickCount > 30) {
-                exploded = true;
+                setExploded(true);
             }
         }
         this.hitBox.setLocation(x,y);
@@ -157,7 +162,7 @@ public class Bullet extends GameObject {
             g2d.drawImage(this.bulletImage, rotation, null);
         }
         else {
-            if (!exploded) {
+            if (!isExploded()) {
                 g2d.drawImage(explosionImage, rotation, null);
             }
         }

@@ -81,7 +81,7 @@ public class Tank extends GameObject{
     }
 
     public String getObjectType() {
-        return "tank";
+        return objectType;
     }
 
 
@@ -137,7 +137,7 @@ public class Tank extends GameObject{
     public void collide() {
         setIsStopped(true);
         checkBorder();
-        this.hitBox.setLocation(x,y);
+        this.hitBox.setLocation(x + vx, y + vy);
     }
 
     public int getY() {
@@ -146,7 +146,7 @@ public class Tank extends GameObject{
 
     void addBullet(int x, int y, int vx, int vy, int angle, TankGame tankGame) {
         Bullet bullet = new Bullet(x, y, angle, Resource.getResourceImage("bullet"), owner);
-        //tankGame.addGameObject(bullet);
+        tankGame.addGameObject(bullet);
     }
 
     @Override
@@ -163,8 +163,8 @@ public class Tank extends GameObject{
         this.health = health;
     }
 
-    public void bulletDamage() {
-        this.health -= 10;
+    public void damageTank() {
+        health -= 5;
     }
 
     public int getHealth() {
@@ -223,8 +223,9 @@ public class Tank extends GameObject{
         }
 
         if (this.ShootPressed && TankGame.tickCounter % 20 == 0) {
-            Bullet bullet = new Bullet(x + vx, y + vy, angle, Resource.getResourceImage("bullet"), owner);
-            tankGame.addGameObject(bullet);
+            addBullet(x + vx, y + vy, vx, vy, angle, tankGame);
+            //Bullet bullet = new Bullet(x + vx, y + vy, angle, Resource.getResourceImage("bullet"), owner);
+            //tankGame.addGameObject(bullet);
 
         }
 

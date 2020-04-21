@@ -5,7 +5,7 @@ import static javax.imageio.ImageIO.read;
 
 public class BreakableWall extends Wall{
     int x, y, height, width;
-    int state = 2; // state of wall brokenness - change to 1 when hit, 0 when broken
+    int health = 25; // the wall sustains damage, much like a tank. when health reaches 0, it is destroyed
     CollisionDetection collisionDetection;
     BufferedImage wallImage;
     String objectType = "breakableWall";
@@ -14,7 +14,7 @@ public class BreakableWall extends Wall{
         this.x = x;
         this.y = y;
         this.wallImage = wallImage;
-        this.state = state;
+        this.health = health;
         this.objectType = objectType;
         this.hitBox = new Rectangle(x,y,this.wallImage.getWidth(), this.wallImage.getHeight());
     }
@@ -35,12 +35,16 @@ public class BreakableWall extends Wall{
 
     }
 
-    public void setState(int state) {
-        this.state = state;
+    public void setHealth(int health) {
+        this.health = health;
+    }
+
+    public int getHealth() {
+        return this.health;
     }
 
     public String getObjectType() {
-        return "breakableWall";
+        return objectType;
     }
 
     @Override
@@ -56,12 +60,23 @@ public class BreakableWall extends Wall{
     @Override
     public void drawImage(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
-        g2.drawImage(this.wallImage, x, y, null);
+        // if wall is damaged, show broken wall instead
+        if (getHealth() < 25) {
+            g2.drawImage(Resource.getResourceImage("breakableWallDamaged"), x, y, null);
+        }
+        else {
+            g2.drawImage(this.wallImage, x, y, null);
+        }
+
     }
 
     @Override
     public void update() {
 
+    }
+
+    public void damageWall() {
+        health -= 5;
     }
 
     @Override

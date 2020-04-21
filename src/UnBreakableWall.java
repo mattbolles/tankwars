@@ -10,16 +10,19 @@ public class UnBreakableWall extends Wall {
         this.y = y;
         this.wallImage = wallImage;
         this.hitBox = new Rectangle(x,y,this.wallImage.getWidth(), this.wallImage.getHeight());
+        this.objectType = "unbreakableWall";
     }
 
     public String getObjectType() {
-        return "unbreakableWall";
+        return objectType;
     }
 
     @Override
     public void collide() {
 
     }
+
+
 
     @Override
     public Rectangle getHitBox() {

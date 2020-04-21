@@ -167,8 +167,8 @@ public class Bullet extends GameObject {
             }
         }
         // draw hitbox in yellow
-        g2d.setColor(Color.YELLOW);
-        g2d.drawRect(x,y,this.bulletImage.getWidth(),this.bulletImage.getHeight());
+        /*g2d.setColor(Color.YELLOW);
+        g2d.drawRect(x,y,this.bulletImage.getWidth(),this.bulletImage.getHeight());*/
     }
 
 }

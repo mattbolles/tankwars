@@ -34,9 +34,8 @@ public class TankGame extends JPanel  {
     private Background backgroundTile;
     private Graphics2D buffer;
     private JFrame jFrame;
-    int tankOneLives = 2;
-    int tankTwoLives = 2;
-    int tankTwoHealth = 25;
+    int tankOneLives = 3;
+    int tankTwoLives = 3;
     String tankOneCurrentWeapon = "Bullet";
     String tankTwoCurrentWeapon  = "Bullet";
     String tankOneCurrentPowerUp = "None";
@@ -93,60 +92,12 @@ public class TankGame extends JPanel  {
                 for (int i = 0; i < tankGame.gameObjects.size(); i++) {
                 tankGame.gameObjects.get(i).update();
                 }
-                //tankGame.tankOne.update();
-                //tankGame.tankTwo.update();
-
-
-
-                /*for (GameObject currentGameObject : tankGame.gameObjects) {
-                    //System.out.println("Current object: " + object.getObjectType());
-                    Rectangle t1 = tankOne.getHitBox();
-                    Rectangle t2 = tankTwo.getHitBox();
-                    Rectangle objectRect = currentGameObject.getHitBox();
-
-                    if (!currentGameObject.getObjectType().equalsIgnoreCase("tank")) {
-                        if (objectRect.intersects(t1)) {
-                            *//*System.out.println("t1 intersects " + currentGameObject.getObjectType() + " located at " + currentGameObject.getX() +
-                                            ", " + currentGameObject.getY() + ". Tank is at " + t1.getX() + ", " + t1.getY());*//*
-                            tankOne.collide(currentGameObject);
-
-                        }
-
-                        if (objectRect.intersects(t2)) {
-                            tankTwo.collide(currentGameObject);
-                        }
-
-
-                        //check all other collisions
-                        *//*for (GameObject anotherGameObject : tankGame.gameObjects) {
-                            if (!currentGameObject.equals(anotherGameObject)) {
-                                if (collisionDetector.isCollisionDetected(currentGameObject, anotherGameObject)) {
-                                    currentGameObject.collide(anotherGameObject);
-                                }
-                            }
-                        }*//*
-                    }
-                    else {
-                        for (Bullet bullet : tankOneBulletList) {
-                            if (collisionDetector.isCollisionDetected(bullet, currentGameObject)) {
-                                if (!currentGameObject.equals(tankOne)) {
-                                    bullet.collide(currentGameObject);
-                                }
-                            }
-                        }
-                    }
-
-
-                }*/
-
                 tickCounter++;
-                //  System.out.println(tankGame.t1);
                 Thread.sleep(1000 / 144);
             }
         } catch (InterruptedException ignored) {
             System.out.println(ignored);
         }
-
     }
 
 
@@ -237,12 +188,6 @@ public class TankGame extends JPanel  {
 
     }
 
-
-    public GameObject getGameObjectFromList(int objectToGet) {
-        GameObject returnedObject = this.gameObjects.get(this.gameObjects.size() - objectToGet);
-        return returnedObject;
-    }
-
     public void addGameObject(GameObject objectToAdd) {
         this.gameObjects.add(objectToAdd);
     }
@@ -273,64 +218,6 @@ public class TankGame extends JPanel  {
         }
         return tankHealth;
     }
-    public int getCameraTankOneX() {
-        // get 1st tank
-        //Tank tankOne = (Tank) this.gameObjects.get(this.gameObjects.size() - 2);
-        // divide by 4 as each player gets half the screen width originally
-        int cameraX = tankOne.getX() - (GameInfo.SCREEN_WIDTH / 4);
-        if (cameraX > offsetMaxX) {
-            cameraX = offsetMaxX;
-        }
-
-        else if (cameraX < offsetMinX) {
-            cameraX = offsetMinX;
-        }
-        return cameraX;
-    }
-
-    public int getCameraTankOneY() {
-        //Tank tankOne = (Tank) this.gameObjects.get(this.gameObjects.size() - 2);
-        int cameraY = tankOne.getY() - (GameInfo.SCREEN_HEIGHT / 2);
-        if (cameraY > offsetMaxY) {
-            cameraY = offsetMaxY;
-        }
-
-        else if (cameraY < offsetMinY) {
-            cameraY = offsetMinY;
-        }
-        return cameraY;
-    }
-
-    public int getCameraTankTwoX() {
-        //Tank tankTwo = (Tank) this.gameObjects.get(this.gameObjects.size() - 1);
-        // divide by 4 as each player gets half the screen width originally
-        int cameraX = tankTwo.getX() - (GameInfo.SCREEN_WIDTH / 4);
-        if (cameraX > offsetMaxX) {
-            cameraX = offsetMaxX;
-        }
-
-        else if (cameraX < offsetMinX) {
-            cameraX = offsetMinX;
-        }
-        return cameraX;
-    }
-
-
-
-    public int getCameraTankTwoY() {
-        // Tank tankTwo = (Tank) this.gameObjects.get(this.gameObjects.size() - 1); // gets added 2nd
-        int cameraY = tankTwo.getY() - (GameInfo.SCREEN_HEIGHT / 2);
-        if (cameraY > offsetMaxY) {
-            cameraY = offsetMaxY;
-        }
-
-        else if (cameraY < offsetMinY) {
-            cameraY = offsetMinY;
-        }
-        return cameraY;
-    }
-
-
 
 
     @Override
@@ -348,9 +235,9 @@ public class TankGame extends JPanel  {
         for (int i = 0; i < this.gameObjects.size(); i++) {
             this.gameObjects.get(i).drawImage(buffer);
         }
-        BufferedImage leftScreenHalf = world.getSubimage(getCameraTankOneX(), getCameraTankOneY(),
+        BufferedImage leftScreenHalf = world.getSubimage(tankOne.getCameraX(), tankOne.getCameraY(),
                 GameInfo.SCREEN_WIDTH / 2, GameInfo.SCREEN_HEIGHT);
-        BufferedImage rightScreenHalf = world.getSubimage(getCameraTankTwoX(), getCameraTankTwoY(),
+        BufferedImage rightScreenHalf = world.getSubimage(tankTwo.getCameraX(), tankTwo.getCameraY(),
                 GameInfo.SCREEN_WIDTH / 2, GameInfo.SCREEN_HEIGHT);
         BufferedImage miniMap = world.getSubimage(0,0, GameInfo.WORLD_WIDTH, GameInfo.WORLD_HEIGHT);
         /*// draw black split screen border
@@ -359,35 +246,65 @@ public class TankGame extends JPanel  {
         g2.drawImage(leftScreenHalf,0,0,null);
         g2.drawImage(rightScreenHalf,GameInfo.SCREEN_WIDTH / 2 + 4,0,null);
         //draw minimap
-        g2.scale(.09,.09);
-        g2.drawImage(miniMap, 6100, 6400, null);
-        g2.drawRect(6100, 6400, miniMap.getWidth(), miniMap.getHeight());
-        g2.scale(1.0,1.0);
 
         //draw lives etc - put in seperate function later
         //p1
-        Font infoFontBold = new Font("Helvetica", Font.BOLD, 190);
-        Font infoFont = new Font("Helvetica", Font.PLAIN, 180);
-        g2.drawRect(400, 400,2000,900);
-        g2.fillRect(400,400,2000,900);
-        String playerOneLives = "Lives: " + tankOneLives;
-        String playerOneHealth = Integer.toString(getTankHealth("tankOne"));
-        String playerOneWeapon = "Weapon: " +  tankOneCurrentWeapon;
-        String playerOnePowerup = "PowerUp: " + tankOneCurrentPowerUp;
-        g2.setColor(Color.WHITE);
+        Font infoFontBold = new Font("Helvetica", Font.BOLD, 19);
+        Font infoFont = new Font("Helvetica", Font.PLAIN, 18);
+        g2.fillRect(40,40,110,80);
+        g2.setColor(Color.CYAN);
+        g2.drawRect(39, 39, 112, 82);
+
         g2.setFont(infoFontBold);
-        g2.drawString("Player One", 450, 620);
-        g2.setFont(infoFont);
-        g2.drawString("Health:", 450, 820);
-        if (getTankHealth("tankOne") <= 60) {
+        // change to accurate color when you make this a seperate function
+        g2.setColor(Color.CYAN);
+        g2.drawString("Player One", 45, 60);
+        g2.setColor(Color.WHITE);
+        if (tankOne.getHealth() <= 60 && tankOne.getHealth() > 25) {
             g2.setColor(Color.YELLOW);
         }
-        else if (getTankHealth("tankOne") <= 25) {
+        else if (tankOne.getHealth() <= 25) {
             g2.setColor(Color.RED);
         }
-        g2.drawString(playerOneHealth, 1075, 820);
+        g2.fillRect(45, 68, tankOne.getHealth(), 15);
+        //g2.drawString(playerOneHealth, 1075, 820);
         g2.setColor(Color.WHITE);
-        g2.drawString(playerOneLives, 450, 1020);
+        //g2.drawString(playerOneLives, 450, 1020);
+        for (int i = 0; i < tankOneLives; i++) {
+                g2.drawImage(Resource.getResourceImage("tank1life"), 45 + (37 * i), 90, null);
+        }
+
+        //p2
+        g2.setColor(Color.BLACK);
+        g2.fillRect(GameInfo.SCREEN_WIDTH - 150, GameInfo.SCREEN_HEIGHT - 130,110,80);
+        g2.setColor(Color.WHITE);
+        g2.setFont(infoFontBold);
+        g2.setColor(Color.PINK);
+        g2.drawRect(GameInfo.SCREEN_WIDTH - 151, GameInfo.SCREEN_HEIGHT - 131, 112, 82);
+        g2.drawString("Player Two", GameInfo.SCREEN_WIDTH - 145, GameInfo.SCREEN_HEIGHT - 110);
+        g2.setColor(Color.WHITE);
+        if (tankTwo.getHealth() <= 60 && tankTwo.getHealth() > 25) {
+            g2.setColor(Color.YELLOW);
+        }
+        else if (tankTwo.getHealth() <= 25) {
+            g2.setColor(Color.RED);
+        }
+        g2.fillRect(GameInfo.SCREEN_WIDTH - 145, GameInfo.SCREEN_HEIGHT - 102, tankTwo.getHealth(), 15);
+        //g2.drawString(playerOneHealth, 1075, 820);
+        g2.setColor(Color.WHITE);
+        //g2.drawString(playerOneLives, 450, 1020);
+        for (int i = 0; i < tankTwoLives; i++) {
+            g2.drawImage(Resource.getResourceImage("tank2life"), GameInfo.SCREEN_WIDTH - 145 + (37 * i),
+                    GameInfo.SCREEN_HEIGHT - 80, null);
+        }
+
+
+        // put last so scale doesn't affect rest
+        g2.scale(.09,.09);
+        g2.drawImage(miniMap, 6100, 6400, null);
+        g2.setColor(Color.WHITE);
+        g2.drawRect(6090, 6390, miniMap.getWidth() + 10, miniMap.getHeight() + 10);
+
         //fix this
         /*if ("Bullet".equalsIgnoreCase(tankOneCurrentWeapon)) {
             g2.drawImage(TankGame.bulletImage, 450, 1220, null);

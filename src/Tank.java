@@ -337,7 +337,7 @@ public class Tank extends GameObject{
         return "x=" + x + ", y=" + y + ", angle=" + angle;
     }
 
-    public int getCameraTankOneX() {
+    public int getCameraX() {
         // get 1st tank
         // divide by 4 as each player gets half the screen width originally
         int cameraX = this.getX() - (GameInfo.SCREEN_WIDTH / 4);
@@ -351,7 +351,7 @@ public class Tank extends GameObject{
         return cameraX;
     }
 
-    public int getCameraTankOneY() {
+    public int getCameraY() {
         int cameraY = this.getY() - (GameInfo.SCREEN_HEIGHT / 2);
         if (cameraY > GameInfo.offsetMaxY) {
             cameraY = GameInfo.offsetMaxY;
@@ -374,8 +374,8 @@ public class Tank extends GameObject{
         g2d.drawImage(this.tankImage, rotation, null);
         this.bulletList.forEach(bullet -> bullet.drawImage(g));
         // draw hitbox in yellow
-        g2d.setColor(Color.YELLOW);
-        g2d.drawRect(x,y,this.tankImage.getWidth(),this.tankImage.getHeight());
+        /*g2d.setColor(Color.YELLOW);
+        g2d.drawRect(x,y,this.tankImage.getWidth(),this.tankImage.getHeight());*/
     }
 
 

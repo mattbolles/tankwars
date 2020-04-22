@@ -13,7 +13,6 @@ public class GameInfo {
     public static final int offsetMaxY = WORLD_HEIGHT - SCREEN_HEIGHT;
     public static final int offsetMinX = 0;
     public static final int offsetMinY = 0;
-    public enum GameState {START, RUNNING, PAUSE, GAMEOVER};
 
 
 }

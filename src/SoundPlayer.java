@@ -26,13 +26,13 @@ public class SoundPlayer {
             clip.open(soundStream);
         }
         catch(Exception e){
-            System.out.println(e.getMessage() + "No sound documents are fouond");
+            System.out.println(e.getMessage() + "No sound documents are found");
         }
         if(this.type == 1){
             Runnable myRunnable = new Runnable(){
                 public void run(){
                     while(true){
-                        clip.start();
+                        //clip.start();
                         clip.loop(clip.LOOP_CONTINUOUSLY);
                         try {
                             Thread.sleep(10000);
@@ -45,6 +45,10 @@ public class SoundPlayer {
             Thread thread = new Thread(myRunnable);
             thread.start();
         }
+    }
+
+    public void setSoundFile(String soundFile) {
+        this.soundFile = soundFile;
     }
 
     public void play(){

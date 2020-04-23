@@ -92,7 +92,7 @@ public class Tank extends GameObject{
     }
 
     void killTank() {
-        if (lives > 0) {
+        if (lives > 1) {
             //respawn
             if ("tankOne".equals(this.getOwner())) {
                 this.setX(GameInfo.tankOneXSpawnCoord);

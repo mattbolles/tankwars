@@ -1,3 +1,4 @@
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.util.HashMap;
@@ -24,6 +25,7 @@ public class Resource {
                 ".gif")));
         Resource.resources.put("tank1life", read(TankGame.class.getClassLoader().getResource("tank1lifeicon.png")));
         Resource.resources.put("tank2life", read(TankGame.class.getClassLoader().getResource("tank2lifeicon.png")));
+        Resource.resources.put("logo", read(TankGame.class.getClassLoader().getResource("tankgamelogo.png")));
         } catch (IOException exception) {
             exception.printStackTrace();
             // abandon ship if resources don't work
@@ -31,7 +33,12 @@ public class Resource {
         }
 
 
+
+
     }
+
+    public static Font infoFontBold = new Font("Helvetica", Font.BOLD, 19);
+    public static Font infoFont = new Font("Helvetica", Font.PLAIN, 18);
 
     public static BufferedImage getResourceImage(String key) {
         return Resource.resources.get(key);

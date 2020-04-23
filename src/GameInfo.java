@@ -1,3 +1,5 @@
+import java.awt.*;
+
 public class GameInfo {
     // add check for window resolution later - if user resolution too small, display error
 
@@ -13,6 +15,5 @@ public class GameInfo {
     public static final int offsetMaxY = WORLD_HEIGHT - SCREEN_HEIGHT;
     public static final int offsetMinX = 0;
     public static final int offsetMinY = 0;
-
 
 }

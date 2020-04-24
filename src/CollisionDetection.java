@@ -67,6 +67,17 @@ public class CollisionDetection{
                                 ((Tank) currentGameObject).setIsStopped(true);
                                 ((BreakableWall) anotherGameObject).damageWall(5);
                             }
+
+                            else if (anotherGameObject instanceof SpeedBoost) {
+                                ((SpeedBoost) anotherGameObject).setOwner(((Tank) currentGameObject).getOwner());
+                                ((SpeedBoost) anotherGameObject).setActive(true);
+                                ((SpeedBoost) anotherGameObject).setVisible(false);
+                                ((Tank) currentGameObject).setCurrentPowerUp("speedBoost");
+                                ((Tank) currentGameObject).hasPowerUp = true;
+                                ((SpeedBoost) anotherGameObject).setPowerUpTickCount(0);
+                                ((Tank) currentGameObject).setCurrentPowerUpTickCount(0);
+
+                            }
                         }
 
                         // if bullet collides with something

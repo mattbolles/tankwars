@@ -163,16 +163,12 @@ public class TankGame extends JPanel  {
         });
         // change this to start once we get the start menu working
         try {
-
-            //startScreen.init(this.jFrame);
-
-            //gameOverScreen.init(this.jFrame);
             //background info - generify later:
             int backgroundWidth = Resource.getResourceImage("background").getWidth();
             int backgroundHeight = Resource.getResourceImage("background").getHeight();
             backgroundTile = new Background(backgroundWidth, backgroundHeight, Resource.getResourceImage("background"));
 
-            //for reading maps:
+            //for reading maps - make into seperate function
             InputStreamReader inputStreamReader = new InputStreamReader(TankGame.class.getClassLoader().getResourceAsStream("maps/map1"));
             BufferedReader mapReader = new BufferedReader(inputStreamReader);
 
@@ -192,6 +188,11 @@ public class TankGame extends JPanel  {
                 //go column by column for each row
                 for (int currentCol = 0; currentCol < numOfCols; currentCol++) {
                     switch(mapInfo[currentCol]) {
+                        case "4":
+                            //speedboost
+                            this.gameObjects.add(new SpeedBoost(currentCol*32, currentRow*32,
+                                    Resource.getResourceImage("speedBoost"), 6000));
+                            break;
                         case "2":
                             //breakable wall
                             //mult by 32 since wall tile is 32x32 pixels
@@ -203,6 +204,7 @@ public class TankGame extends JPanel  {
                             //unbreakable wall
                             this.gameObjects.add(new UnBreakableWall(currentCol*32, currentRow*32,
                                     Resource.getResourceImage("unBreakableWall")));
+
                         default:
                             break;
                     }
@@ -268,10 +270,11 @@ public class TankGame extends JPanel  {
         tankOne.setVx(0);
         tankOne.setVy(0);
         tankOne.setAngle(0);
+        tankOne.setCurrentPowerUpTickCount(0);
+        tankOne.setCurrentPowerUp("none");
         tankOne.unToggleShootPressed();
         tankOne.setCompletelyKilled(false);
         tankOne.setTankGame(this);
-        //reset powerups when implemented
         tankTwo.setHealth(100);
         tankTwo.setLives(3);
         tankTwo.setX(GameInfo.tankTwoXSpawnCoord);
@@ -279,6 +282,8 @@ public class TankGame extends JPanel  {
         tankTwo.setVx(0);
         tankTwo.setVy(0);
         tankTwo.setAngle(180);
+        tankTwo.setCurrentPowerUpTickCount(0);
+        tankTwo.setCurrentPowerUp("none");
         tankTwo.unToggleShootPressed();
         tankTwo.setCompletelyKilled(false);
         tankOne.setTankGame(this);
@@ -292,6 +297,7 @@ public class TankGame extends JPanel  {
         if (!gamePaused) {
             try {
                 tankGame.repaint();
+                // this updating only has to do with objects being visible on map
                 for (int currentGameObjectIndex = 0; currentGameObjectIndex < tankGame.gameObjects.size(); currentGameObjectIndex++) {
                     GameObject currentGameObject = tankGame.gameObjects.get(currentGameObjectIndex);
                     if (currentGameObject instanceof Bullet) {
@@ -302,11 +308,15 @@ public class TankGame extends JPanel  {
                         } else {
                             currentGameObject.update();
                         }
-                    } else if (currentGameObject instanceof BreakableWall) {
+                    }
+
+                    else if (currentGameObject instanceof BreakableWall) {
                         if (((BreakableWall) currentGameObject).getHealth() <= 0) {
                             tankGame.gameObjects.remove(currentGameObjectIndex);
                         }
-                    } else if (currentGameObject instanceof Tank) {
+                    }
+
+                    else if (currentGameObject instanceof Tank) {
                         if (((Tank) currentGameObject).getHealth() <= 0) {
                             // if tank is not dead
                             if (!((Tank) currentGameObject).completelyKilled) {
@@ -322,9 +332,17 @@ public class TankGame extends JPanel  {
                             }
                         }
                     }
-                }
-                tankGame.gameObjects = collisionDetector.processCollisions(tankGame.gameObjects);
 
+                    else if (currentGameObject instanceof SpeedBoost) {
+                        //if not visible and not active, remove
+                        if (!"none".equals(((SpeedBoost) currentGameObject).getOwner()) && !((SpeedBoost) currentGameObject).isActive()) {
+                            tankGame.gameObjects.remove(currentGameObject);
+                        }
+
+                    }
+                }
+
+                tankGame.gameObjects = collisionDetector.processCollisions(tankGame.gameObjects);
                 for (int i = 0; i < tankGame.gameObjects.size(); i++) {
                     tankGame.gameObjects.get(i).update();
                 }
@@ -349,14 +367,6 @@ public class TankGame extends JPanel  {
         return currentState;
     }
 
-    public static int getMouseLocationX() {
-        return mouseLocationX;
-    }
-
-    public static int getMouseLocationY() {
-        return mouseLocationY;
-    }
-
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
@@ -378,8 +388,8 @@ public class TankGame extends JPanel  {
             this.backgroundTile.drawImage(buffer);
             //draw all game objects
             //this.gameObjects.forEach(gameObject -> gameObject.drawImage(buffer));
-            for (int i = 0; i < this.gameObjects.size(); i++) {
-                this.gameObjects.get(i).drawImage(buffer);
+            for (GameObject gameObject : this.gameObjects) {
+                gameObject.drawImage(buffer);
             }
             BufferedImage leftScreenHalf = world.getSubimage(tankOne.getCameraX(), tankOne.getCameraY(),
                     GameInfo.SCREEN_WIDTH / 2, GameInfo.SCREEN_HEIGHT);
@@ -392,9 +402,20 @@ public class TankGame extends JPanel  {
             //draw lives etc - put in seperate function later
             //p1
             g2.fillRect(40, 40, 110, 80);
-            g2.setColor(Color.CYAN);
-            g2.drawRect(39, 39, 112, 82);
-
+            if (tankOne.hasPowerUp) {
+                g2.fillRect(40,120, 110, 35);
+                if ("speedBoost".equals(tankOne.currentPowerUp)) {
+                    g2.drawImage(Resource.getResourceImage("speedBoostIcon"), 45, 125, null);
+                    g2.setColor(Color.WHITE);
+                    g2.fillRect(75, 130, 60 - (tankOne.currentPowerUpTickCount / 33), 15);
+                    g2.setColor(Color.CYAN);
+                    g2.drawRect(39, 39, 112, 117);
+                }
+            }
+            else if ("none".equals(tankOne.currentPowerUp)) {
+                g2.setColor(Color.CYAN);
+                g2.drawRect(39, 39, 112, 82);
+            }
             g2.setFont(Resource.infoFontBold);
             // change to accurate color when you make this a seperate function
             g2.setColor(Color.CYAN);

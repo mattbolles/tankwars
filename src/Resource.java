@@ -26,6 +26,9 @@ public class Resource {
         Resource.resources.put("tank1life", read(TankGame.class.getClassLoader().getResource("tank1lifeicon.png")));
         Resource.resources.put("tank2life", read(TankGame.class.getClassLoader().getResource("tank2lifeicon.png")));
         Resource.resources.put("logo", read(TankGame.class.getClassLoader().getResource("tankgamelogo.png")));
+        Resource.resources.put("speedBoost", read(TankGame.class.getClassLoader().getResource("speedboost.png")));
+        Resource.resources.put("speedBoostIcon",
+                read(TankGame.class.getClassLoader().getResource("speedboosticon.png")));
         } catch (IOException exception) {
             exception.printStackTrace();
             // abandon ship if resources don't work

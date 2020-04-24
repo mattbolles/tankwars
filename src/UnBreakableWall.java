@@ -17,12 +17,6 @@ public class UnBreakableWall extends Wall {
         return objectType;
     }
 
-    @Override
-    public void collide() {
-
-    }
-
-
 
     @Override
     public Rectangle getHitBox() {
@@ -52,13 +46,12 @@ public class UnBreakableWall extends Wall {
     }
 
     @Override
-    public int getWidth() {
-        return this.wallImage.getWidth();
+    public void setX(int x) {
+        this.x = x;
     }
 
     @Override
-    public int getHeight() {
-        return this.wallImage.getHeight();
+    public void setY(int y) {
+        this.y = y;
     }
-
 }

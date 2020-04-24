@@ -23,9 +23,8 @@ public class Tank extends GameObject{
     private int height;
     private int oldX;
     private int oldY;
-    // R from trig - higher the value, faster it goes
-    private int R = 2;
-
+    // R from trig - higher the value, faster it rotates
+    private int R = 3;
     private int health = 100;
     private int healthTickCount = 0;
     private final int ROTATION_SPEED = 3;
@@ -179,6 +178,10 @@ public class Tank extends GameObject{
 
     public void setHealthTickCount(int healthTickCount) {
         this.healthTickCount = healthTickCount;
+    }
+
+    public void setCompletelyKilled(boolean completelyKilled) {
+        this.completelyKilled = completelyKilled;
     }
 
     @Override

@@ -24,6 +24,7 @@ public class TankGame extends JPanel  {
     private Background backgroundTile;
     private Graphics2D buffer;
     private JFrame jFrame;
+    private JFrame newJFrame;
     static int mouseClickX;
     static int mouseClickY;
     static int mouseLocationX;
@@ -33,8 +34,8 @@ public class TankGame extends JPanel  {
     static GameState currentState;
     static StartScreen startScreen;
     static GameOverScreen gameOverScreen;
-    /*static SoundPlayer continuousMusicPlayer;
-    static SoundPlayer soundEffectPlayer;*/
+    static SoundPlayer continuousMusicPlayer = new SoundPlayer(1,"music.wav", false);
+    //static SoundPlayer soundEffectPlayer;
     ArrayList<GameObject> gameObjects;
     Tank tankOne = new Tank(GameInfo.tankOneXSpawnCoord, GameInfo.tankOneYSpawnCoord, 0, 0, 0, Resource.getResourceImage("tankOne"),
             "tankOne", this);
@@ -49,53 +50,85 @@ public class TankGame extends JPanel  {
     public static void main(String[] args) {
         TankGame tankGame = new TankGame();
         tankGame.init();
-        try {
-            while (true) {
+        startScreen = new StartScreen();
+        startScreen.init();
+        gameOverScreen = new GameOverScreen();
+        gameOverScreen.init();
+
+        TankGame.currentState = GameState.START;
+        //try {
+        gameloop: while (true) {
                 // switching to if statements breaks this
                 switch (currentState) {
                     case START:
-                        // fix music - this implementation slows game down a ton - might be because .wav files
-                        //continuousMusicPlayer.stop();
-                        /*soundEffectPlayer.setSoundFile("menusound1");
-                        soundEffectPlayer.play();*/
-                        currentState = startScreen.getCurrentState();
-                        startScreen.runStartScreen(startScreen);
-                        //System.out.println(currentState);
-
+                        System.out.println("case start");
+                        TankGame.continuousMusicPlayer.setStarted(false);
+                        TankGame.continuousMusicPlayer.stop();
+                        tankGame.setJFrameVisible(false);
+                        gameOverScreen.setJFrameVisible(false);
+                        startScreen.setJFrameVisible(true);
+                        while (currentState == GameState.START) {
+                            currentState = startScreen.getCurrentState();
+                            startScreen.runStartScreen();
+                        }
+                        break;
 
                     case RUNNING:
+                        System.out.println("case running");
+                        TankGame.continuousMusicPlayer.setStarted(true);
+                        TankGame.continuousMusicPlayer.play();
+                        startScreen.setJFrameVisible(false);
+                        gameOverScreen.setJFrameVisible(false);
+                        tankGame.jFrame.setVisible(true);
                         //continuousMusicPlayer.play();
-                        currentState = tankGame.getCurrentState();
-                        tankGame.runGame(tankGame);
-                        /*soundEffectPlayer.setSoundFile("menusound1");
-                        soundEffectPlayer.play();*/
+                        while (currentState == GameState.RUNNING) {
+                            currentState = tankGame.getCurrentState();
+                            tankGame.runGame(tankGame);
+                        }
+                        break;
 
                     case GAME_OVER:
-                        currentState = gameOverScreen.getCurrentState();
-                        gameOverScreen.runGameOverScreen(gameOverScreen);
-
+                        System.out.println("case gameover");
+                        TankGame.continuousMusicPlayer.setStarted(false);
+                        TankGame.continuousMusicPlayer.stop();
+                        startScreen.setJFrameVisible(false);
+                        tankGame.setJFrameVisible(false);
+                        gameOverScreen.setJFrameVisible(true);
+                        while (currentState == GameState.GAME_OVER) {
+                            currentState = gameOverScreen.getCurrentState();
+                            gameOverScreen.runGameOverScreen();
+                        }
+                        break;
 
                     case RESET:
-                        //tankGame.resetTanks();
+                        System.out.println("case reset");
+                        tankGame.resetTanks();
+                        tankGame.resetJFrame();
+                        tankGame.init();
                         tankGame.setCurrentState(GameState.RUNNING);
-                        //currentState = gameOverScreen.getCurrentState();
-
-
-                    case RESET_TO_MENU:
-                        //tankGame.resetTanks();
-                        tankGame.setCurrentState(GameState.START);
-                        //currentState = gameOverScreen.getCurrentState();
-
-
-
+                        /*tankGame.resetTanks();
+                        TankGame.continuousMusicPlayer.setStarted(true);
+                        TankGame.continuousMusicPlayer.play();
+                        startScreen.setJFrameVisible(false);
+                        gameOverScreen.setJFrameVisible(false);
+                        tankGame.resetJFrame();
+                        tankGame.jFrame.setVisible(true);
+                        //continuousMusicPlayer.play();
+                        while (currentState == GameState.RUNNING) {
+                            currentState = tankGame.getCurrentState();
+                            tankGame.runGame(tankGame);
+                        }*/
+                        break;
                 }
-
-
             }
-        }
-        catch (Exception ignored) {
+        //}
+        /*catch (Exception ignored) {
             System.out.println(ignored);
-        }
+        }*/
+    }
+
+    public void gameStatusLoop(TankGame tankGame) {
+
     }
 
 
@@ -103,6 +136,9 @@ public class TankGame extends JPanel  {
         this.jFrame = new JFrame("Tank Wars");
         this.world = new BufferedImage(GameInfo.WORLD_WIDTH, GameInfo.WORLD_HEIGHT, BufferedImage.TYPE_INT_RGB);
         this.gameObjects = new ArrayList<>();
+
+
+        //startScreen.init();
 
         //listen for mouse click
         this.jFrame.addMouseListener(new MouseAdapter() {
@@ -126,13 +162,11 @@ public class TankGame extends JPanel  {
             }
         });
         // change this to start once we get the start menu working
-        currentState = GameState.START;
         try {
 
-            startScreen = new StartScreen();
-            startScreen.init(this.jFrame);
-            gameOverScreen = new GameOverScreen();
-            gameOverScreen.init(this.jFrame);
+            //startScreen.init(this.jFrame);
+
+            //gameOverScreen.init(this.jFrame);
             //background info - generify later:
             int backgroundWidth = Resource.getResourceImage("background").getWidth();
             int backgroundHeight = Resource.getResourceImage("background").getHeight();
@@ -206,22 +240,52 @@ public class TankGame extends JPanel  {
         this.jFrame.addKeyListener(tankTwoControl);
         this.jFrame.setSize(GameInfo.SCREEN_WIDTH, GameInfo.SCREEN_HEIGHT + 20);
         this.jFrame.setResizable(false);
-        jFrame.setLocationRelativeTo(null);
+        this.jFrame.setLocationRelativeTo(null);
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        this.jFrame.setVisible(true);
+        this.jFrame.setVisible(false);
+
 
         // background music
-        SoundPlayer continuousMusicPlayer = new SoundPlayer(1,"music.wav");
+        SoundPlayer continuousMusicPlayer = new SoundPlayer(1,"music.wav", false);
 
-        /*soundEffectPlayer = new SoundPlayer(2, "menusound1.wav");
-        soundEffectPlayer.stop();*/
+
+    }
+
+    public void resetJFrame() {
+        // create temp jframe to avoid JVM closing
+        newJFrame = new JFrame("Loading...");
+        this.jFrame.dispose();
+        this.gameObjects.clear();
+        init();
+        this.newJFrame.dispose();
     }
 
     public void resetTanks() {
         tankOne.setHealth(100);
         tankOne.setLives(3);
+        tankOne.setX(GameInfo.tankOneXSpawnCoord);
+        tankOne.setY(GameInfo.tankOneYSpawnCoord);
+        tankOne.setVx(0);
+        tankOne.setVy(0);
+        tankOne.setAngle(0);
+        tankOne.unToggleShootPressed();
+        tankOne.setCompletelyKilled(false);
+        tankOne.setTankGame(this);
+        //reset powerups when implemented
         tankTwo.setHealth(100);
         tankTwo.setLives(3);
+        tankTwo.setX(GameInfo.tankTwoXSpawnCoord);
+        tankTwo.setY(GameInfo.tankTwoYSpawnCoord);
+        tankTwo.setVx(0);
+        tankTwo.setVy(0);
+        tankTwo.setAngle(180);
+        tankTwo.unToggleShootPressed();
+        tankTwo.setCompletelyKilled(false);
+        tankOne.setTankGame(this);
+    }
+
+    public void setJFrameVisible(boolean visible) {
+        this.jFrame.setVisible(visible);
     }
 
     public void runGame(TankGame tankGame) {
@@ -254,7 +318,7 @@ public class TankGame extends JPanel  {
                                 } else {
                                     gameOverScreen.setGameOverWinner("PLAYER TWO");
                                 }
-                                currentState = GameState.GAME_OVER;
+                                setCurrentState(GameState.GAME_OVER);
                             }
                         }
                     }
@@ -285,20 +349,28 @@ public class TankGame extends JPanel  {
         return currentState;
     }
 
+    public static int getMouseLocationX() {
+        return mouseLocationX;
+    }
+
+    public static int getMouseLocationY() {
+        return mouseLocationY;
+    }
 
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         super.paintComponent(g2);
         buffer = world.createGraphics();
-        if (currentState == GameState.START) {
-            startScreen.drawImage(g);
-        }
+        /*if (currentState == GameState.START) {
+            startScreen.drawImage(g2);
+        }*/
 
-        else if (currentState == GameState.GAME_OVER) {
-            gameOverScreen.drawImage(g);
-        }
-        else if (currentState == GameState.RUNNING) {
+        /*else if (currentState == GameState.GAME_OVER) {
+            gameOverScreen.drawImage(g2);
+        }*/
+
+        if (currentState == GameState.RUNNING) {
             buffer.setColor(Color.BLACK);
             //following line avoids image trailing
             buffer.fillRect(0, 0, GameInfo.WORLD_WIDTH, GameInfo.WORLD_HEIGHT);

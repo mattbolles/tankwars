@@ -12,14 +12,16 @@ import javax.sound.sampled.Clip;
 public class SoundPlayer {
     private AudioInputStream soundStream;
     private String soundFile;
+    private boolean started;
     private Clip clip;
     private int type;//1 for sounds that needs to be played all the time
     // 2 for sounds that only need to be played once
 
 
-    public SoundPlayer(int type, String soundFile){
+    public SoundPlayer(int type, String soundFile, boolean started){
         this.soundFile = soundFile;
         this.type = type;
+        this.started = started;
         try{
             soundStream = AudioSystem.getAudioInputStream(SoundPlayer.class.getClassLoader().getResource(soundFile));
             clip = AudioSystem.getClip();
@@ -31,13 +33,15 @@ public class SoundPlayer {
         if(this.type == 1){
             Runnable myRunnable = new Runnable(){
                 public void run(){
-                    while(true){
-                        //clip.start();
-                        clip.loop(clip.LOOP_CONTINUOUSLY);
-                        try {
-                            Thread.sleep(10000);
-                        } catch (InterruptedException ex) {
-                            Logger.getLogger(SoundPlayer.class.getName()).log(Level.SEVERE, null, ex);
+                    if (started) {
+                        while (true) {
+                            clip.start();
+                            clip.loop(clip.LOOP_CONTINUOUSLY);
+                            try {
+                                Thread.sleep(10000);
+                            } catch (InterruptedException ex) {
+                                Logger.getLogger(SoundPlayer.class.getName()).log(Level.SEVERE, null, ex);
+                            }
                         }
                     }
                 }
@@ -56,5 +60,9 @@ public class SoundPlayer {
     }
     public void stop(){
         clip.stop();
+    }
+
+    public void setStarted(boolean started) {
+        this.started = started;
     }
 }

@@ -38,6 +38,8 @@ public class Resource {
     }
 
     public static Font infoFontBold = new Font("Helvetica", Font.BOLD, 19);
+    public static Font buttonFont = new Font("Helvetica", Font.BOLD, 25);
+    public static Font gameOverFont = new Font("Helvetica", Font.BOLD, 35);
     public static Font infoFont = new Font("Helvetica", Font.PLAIN, 18);
 
     public static BufferedImage getResourceImage(String key) {

@@ -65,9 +65,29 @@ public class TankGame extends JPanel  {
 
                     case RUNNING:
                         //continuousMusicPlayer.play();
+                        currentState = tankGame.getCurrentState();
                         tankGame.runGame(tankGame);
                         /*soundEffectPlayer.setSoundFile("menusound1");
                         soundEffectPlayer.play();*/
+
+                    case GAME_OVER:
+                        currentState = gameOverScreen.getCurrentState();
+                        gameOverScreen.runGameOverScreen(gameOverScreen);
+
+
+                    case RESET:
+                        //tankGame.resetTanks();
+                        tankGame.setCurrentState(GameState.RUNNING);
+                        //currentState = gameOverScreen.getCurrentState();
+
+
+                    case RESET_TO_MENU:
+                        //tankGame.resetTanks();
+                        tankGame.setCurrentState(GameState.START);
+                        //currentState = gameOverScreen.getCurrentState();
+
+
+
                 }
 
 
@@ -87,7 +107,7 @@ public class TankGame extends JPanel  {
         //listen for mouse click
         this.jFrame.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
-                    System.out.println("click from main");
+                    //System.out.println("click from main");
                     mouseClickX = mouseEvent.getX();
                     //System.out.println("x: " + mouseClickX);
                     mouseClickY = mouseEvent.getY();
@@ -98,11 +118,11 @@ public class TankGame extends JPanel  {
         //listen for mouse movement
         this.jFrame.addMouseMotionListener(new MouseAdapter() {
             public void mouseMoved(MouseEvent mouseEvent) {
-                    System.out.println("move from main");
+                    //System.out.println("move from main");
                     mouseLocationX = mouseEvent.getX();
-                    System.out.println("x: " + mouseLocationX);
+                    //System.out.println("x: " + mouseLocationX);
                     mouseLocationY = mouseEvent.getY();
-                    System.out.println("y: " + mouseLocationY);
+                    //System.out.println("y: " + mouseLocationY);
             }
         });
         // change this to start once we get the start menu working
@@ -112,6 +132,7 @@ public class TankGame extends JPanel  {
             startScreen = new StartScreen();
             startScreen.init(this.jFrame);
             gameOverScreen = new GameOverScreen();
+            gameOverScreen.init(this.jFrame);
             //background info - generify later:
             int backgroundWidth = Resource.getResourceImage("background").getWidth();
             int backgroundHeight = Resource.getResourceImage("background").getHeight();
@@ -196,6 +217,13 @@ public class TankGame extends JPanel  {
         soundEffectPlayer.stop();*/
     }
 
+    public void resetTanks() {
+        tankOne.setHealth(100);
+        tankOne.setLives(3);
+        tankTwo.setHealth(100);
+        tankTwo.setLives(3);
+    }
+
     public void runGame(TankGame tankGame) {
         if (!gamePaused) {
             try {
@@ -226,7 +254,7 @@ public class TankGame extends JPanel  {
                                 } else {
                                     gameOverScreen.setGameOverWinner("PLAYER TWO");
                                 }
-                                currentState = GameState.GAMEOVER;
+                                currentState = GameState.GAME_OVER;
                             }
                         }
                     }
@@ -253,6 +281,10 @@ public class TankGame extends JPanel  {
         currentState = state;
     }
 
+    public GameState getCurrentState() {
+        return currentState;
+    }
+
 
     @Override
     public void paintComponent(Graphics g) {
@@ -263,7 +295,7 @@ public class TankGame extends JPanel  {
             startScreen.drawImage(g);
         }
 
-        else if (currentState == GameState.GAMEOVER) {
+        else if (currentState == GameState.GAME_OVER) {
             gameOverScreen.drawImage(g);
         }
         else if (currentState == GameState.RUNNING) {

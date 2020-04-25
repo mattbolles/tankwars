@@ -38,7 +38,7 @@ public class TankGame extends JPanel  {
     static GameState currentState;
     static StartScreen startScreen;
     static GameOverScreen gameOverScreen;
-    static SoundPlayer continuousMusicPlayer = new SoundPlayer(1,"music.wav", false);
+    static SoundPlayer continuousMusicPlayer = new SoundPlayer(1, "sound/music.wav", false);
     static CollisionDetection collisionDetector = new CollisionDetection();
     ArrayList<GameObject> gameObjects;
     Tank tankOne = new Tank(GameInfo.tankOneXSpawnCoord, GameInfo.tankOneYSpawnCoord, 0, 0, 0, Resource.getResourceImage("tankOne"),
@@ -55,56 +55,54 @@ public class TankGame extends JPanel  {
         startScreen.init();
         gameOverScreen = new GameOverScreen();
         gameOverScreen.init();
-
         TankGame.currentState = GameState.START;
-        //try {
-        gameloop: while (true) {
-                // switching to if statements breaks this
-                switch (currentState) {
-                    case START:
-                        TankGame.continuousMusicPlayer.setStarted(false);
-                        TankGame.continuousMusicPlayer.stop();
-                        tankGame.setJFrameVisible(false);
-                        gameOverScreen.setJFrameVisible(false);
-                        startScreen.setJFrameVisible(true);
-                        while (currentState == GameState.START) {
-                            currentState = startScreen.getCurrentState();
-                            startScreen.runStartScreen();
-                        }
-                        break;
+        while (true) {
+            // switching to if statements breaks this
+            switch (currentState) {
+                case START:
+                    TankGame.continuousMusicPlayer.setStarted(false);
+                    TankGame.continuousMusicPlayer.stop();
+                    tankGame.setJFrameVisible(false);
+                    gameOverScreen.setJFrameVisible(false);
+                    startScreen.setJFrameVisible(true);
+                    while (currentState == GameState.START) {
+                        currentState = startScreen.getCurrentState();
+                        startScreen.runStartScreen();
+                    }
+                    break;
 
-                    case RUNNING:
-                        TankGame.continuousMusicPlayer.setStarted(true);
-                        TankGame.continuousMusicPlayer.play();
-                        startScreen.setJFrameVisible(false);
-                        gameOverScreen.setJFrameVisible(false);
-                        tankGame.jFrame.setVisible(true);
-                        while (currentState == GameState.RUNNING) {
-                            currentState = tankGame.getCurrentState();
-                            tankGame.runGame(tankGame);
-                        }
-                        break;
+                case RUNNING:
+                    TankGame.continuousMusicPlayer.setStarted(true);
+                    TankGame.continuousMusicPlayer.play();
+                    startScreen.setJFrameVisible(false);
+                    gameOverScreen.setJFrameVisible(false);
+                    tankGame.jFrame.setVisible(true);
+                    while (currentState == GameState.RUNNING) {
+                        currentState = tankGame.getCurrentState();
+                        tankGame.runGame(tankGame);
+                    }
+                    break;
 
-                    case GAME_OVER:
-                        TankGame.continuousMusicPlayer.setStarted(false);
-                        TankGame.continuousMusicPlayer.stop();
-                        startScreen.setJFrameVisible(false);
-                        tankGame.setJFrameVisible(false);
-                        gameOverScreen.setJFrameVisible(true);
-                        while (currentState == GameState.GAME_OVER) {
-                            currentState = gameOverScreen.getCurrentState();
-                            gameOverScreen.runGameOverScreen();
-                        }
-                        break;
+                case GAME_OVER:
+                    TankGame.continuousMusicPlayer.setStarted(false);
+                    TankGame.continuousMusicPlayer.stop();
+                    startScreen.setJFrameVisible(false);
+                    tankGame.setJFrameVisible(false);
+                    gameOverScreen.setJFrameVisible(true);
+                    while (currentState == GameState.GAME_OVER) {
+                        currentState = gameOverScreen.getCurrentState();
+                        gameOverScreen.runGameOverScreen();
+                    }
+                    break;
 
-                    case RESET:
-                        tankGame.resetTanks();
-                        tankGame.resetJFrame();
-                        tankGame.init();
-                        tankGame.setCurrentState(GameState.RUNNING);
-                        break;
-                }
+                case RESET:
+                    tankGame.resetTanks();
+                    tankGame.resetJFrame();
+                    tankGame.init();
+                    tankGame.setCurrentState(GameState.RUNNING);
+                    break;
             }
+        }
     }
 
 
@@ -112,10 +110,6 @@ public class TankGame extends JPanel  {
         this.jFrame = new JFrame("Tank Wars");
         this.world = new BufferedImage(GameInfo.WORLD_WIDTH, GameInfo.WORLD_HEIGHT, BufferedImage.TYPE_INT_RGB);
         this.gameObjects = new ArrayList<>();
-
-
-        //startScreen.init();
-
         //listen for mouse click
         this.jFrame.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
@@ -207,11 +201,13 @@ public class TankGame extends JPanel  {
         this.jFrame.add(this);
         this.jFrame.addKeyListener(tankOneControl);
         this.jFrame.addKeyListener(tankTwoControl);
-        this.jFrame.setSize(GameInfo.SCREEN_WIDTH, GameInfo.SCREEN_HEIGHT + 20);
+        this.jFrame.setSize(GameInfo.SCREEN_WIDTH, GameInfo.SCREEN_HEIGHT);
         this.jFrame.setResizable(false);
         this.jFrame.setLocationRelativeTo(null);
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.jFrame.setVisible(false);
+        this.jFrame.setUndecorated(true);
+        this.jFrame.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
     }
 
     public void resetJFrame() {

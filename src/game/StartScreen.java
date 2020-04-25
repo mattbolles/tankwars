@@ -19,7 +19,7 @@ public class StartScreen extends JPanel {
     int mouseClickY;
     int mouseLocationX;
     int mouseLocationY;
-    SoundPlayer soundEffectPlayer = new SoundPlayer(2, "menusound1.wav", true);
+    SoundPlayer soundEffectPlayer = new SoundPlayer(2, "sound/menusound1.wav", true);
 
     public void drawImage(Graphics g) {
         g.setColor(Color.BLACK);
@@ -28,6 +28,9 @@ public class StartScreen extends JPanel {
         g.drawImage(Resource.getResourceImage("logo"), logoXLocation, 50, null);
         drawStartButton(g);
         drawExitButton(g);
+        g.setColor(Color.LIGHT_GRAY);
+        g.setFont(Resource.creditFont);
+        g.drawString("2020 Matt Bolles", GameInfo.SCREEN_WIDTH/2 - 75, 750);
     }
 
 
@@ -46,7 +49,7 @@ public class StartScreen extends JPanel {
             g.fillRoundRect(buttonXLocation,416,210,70,20,20);
             g.setColor(Color.LIGHT_GRAY);
         }
-        g.drawString("START", buttonXLocation + 50, 470);
+        g.drawString("START", buttonXLocation + 20, 470);
     }
 
     public void drawExitButton(Graphics g) {
@@ -107,11 +110,14 @@ public class StartScreen extends JPanel {
 
         this.jFrame.setLayout(new BorderLayout());
         this.jFrame.add(this);
-        this.jFrame.setSize(GameInfo.SCREEN_WIDTH, GameInfo.SCREEN_HEIGHT + 20);
+        this.jFrame.setSize(GameInfo.SCREEN_WIDTH, GameInfo.SCREEN_HEIGHT);
         this.jFrame.setResizable(false);
         this.jFrame.setLocationRelativeTo(null);
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        this.jFrame.setUndecorated(true);
+        this.jFrame.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
         this.jFrame.setVisible(true);
+
 
 
     }

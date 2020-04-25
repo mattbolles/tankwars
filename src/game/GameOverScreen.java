@@ -20,7 +20,7 @@ public class GameOverScreen extends JPanel {
     int mouseClickY;
     int mouseLocationX;
     int mouseLocationY;
-    SoundPlayer soundEffectPlayer = new SoundPlayer(2, "menusound2.wav", true);
+    SoundPlayer soundEffectPlayer = new SoundPlayer(2, "sound/menusound2.wav", true);
 
     public void drawImage(Graphics g) {
         g.setColor(Color.BLACK);
@@ -31,8 +31,11 @@ public class GameOverScreen extends JPanel {
         drawExitButton(g);
         g.setColor(Color.WHITE);
         g.setFont(Resource.gameOverFont);
-        g.drawString("GAME OVER!", buttonXLocation, 350);
-        g.drawString(winningPlayer + " WINS!", buttonXLocation - 35, 400);
+        g.drawString("GAME OVER!", buttonXLocation, 310);
+        g.drawString(winningPlayer + " WINS!", buttonXLocation, 350);
+        g.setColor(Color.LIGHT_GRAY);
+        g.setFont(Resource.creditFont);
+        g.drawString("2020 Matt Bolles", GameInfo.SCREEN_WIDTH/2 - 75, 750);
     }
 
 
@@ -51,7 +54,7 @@ public class GameOverScreen extends JPanel {
             g.fillRoundRect(buttonXLocation,416,210,70,20,20);
             g.setColor(Color.LIGHT_GRAY);
         }
-        g.drawString("RETRY", buttonXLocation + 50, 470);
+        g.drawString("RETRY", buttonXLocation + 20, 470);
     }
 
     public void drawExitButton(Graphics g) {
@@ -115,13 +118,13 @@ public class GameOverScreen extends JPanel {
 
         this.jFrame.setLayout(new BorderLayout());
         this.jFrame.add(this);
-        this.jFrame.setSize(GameInfo.SCREEN_WIDTH, GameInfo.SCREEN_HEIGHT + 20);
+        this.jFrame.setSize(GameInfo.SCREEN_WIDTH, GameInfo.SCREEN_HEIGHT);
         this.jFrame.setResizable(false);
         this.jFrame.setLocationRelativeTo(null);
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.jFrame.setVisible(false);
-
-
+        this.jFrame.setUndecorated(true);
+        this.jFrame.getRootPane().setWindowDecorationStyle(JRootPane.NONE);
     }
 
     public void runGameOverScreen() {

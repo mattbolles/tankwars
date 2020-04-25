@@ -25,6 +25,7 @@ Rotate Right: Right\
 Shoot: Enter/Return
 
 ##How To Run
+
 ####Via Command Line / Terminal
 1. Download [`TankGame.jar`](jar/TankGame.jar) and save to your computer.
 2. In the terminal, navigate to the folder where [`TankGame.jar`](jar/TankGame.jar) is located.

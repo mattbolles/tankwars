@@ -22,9 +22,7 @@ Move Forward: Up\
 Move Backward: Down\
 Rotate Left: Left\
 Rotate Right: Right\
-Shoot: Enter/Return
-
-
+Shoot: Enter / Return
 ##How To Run
 
 **Via Command Line / Terminal**

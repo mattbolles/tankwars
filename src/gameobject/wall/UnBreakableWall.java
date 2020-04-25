@@ -11,12 +11,28 @@ public class UnBreakableWall extends Wall {
         this.x = x;
         this.y = y;
         this.wallImage = wallImage;
-        this.hitBox = new Rectangle(x,y,this.wallImage.getWidth(), this.wallImage.getHeight());
+        this.hitBox = new Rectangle(x, y, this.wallImage.getWidth(), this.wallImage.getHeight());
         this.objectType = "unbreakableWall";
     }
 
-    public String getObjectType() {
-        return objectType;
+    @Override
+    public int getX() {
+        return this.x;
+    }
+
+    @Override
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    @Override
+    public int getY() {
+        return this.y;
+    }
+
+    @Override
+    public void setY(int y) {
+        this.y = y;
     }
 
 
@@ -28,32 +44,12 @@ public class UnBreakableWall extends Wall {
 
     @Override
     public void drawImage(Graphics g) {
-        Graphics2D g2 = (Graphics2D)g;
+        Graphics2D g2 = (Graphics2D) g;
         g2.drawImage(this.wallImage, x, y, null);
     }
 
     @Override
     public void update() {
         //nothing needs to be done for this one
-    }
-
-    @Override
-    public int getX() {
-        return this.x;
-    }
-
-    @Override
-    public int getY() {
-        return this.y;
-    }
-
-    @Override
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    @Override
-    public void setY(int y) {
-        this.y = y;
     }
 }

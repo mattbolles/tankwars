@@ -1,8 +1,5 @@
 package gameobject.powerup;
 
-import gameobject.Tank;
-import gameobject.powerup.PowerUp;
-
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -17,11 +14,11 @@ public class SpeedBoost extends PowerUp {
     int powerUpTickCount;
     boolean done;
 
-    public SpeedBoost(int x, int y, BufferedImage speedBoostImage, int duration) {
+    public SpeedBoost(int x, int y, BufferedImage speedBoostImage) {
         this.x = x;
         this.y = y;
         this.owner = "none";
-        this.duration = 2000; //ticks / ms
+        this.duration = 2000; // ticks / ms
         this.powerUpTickCount = 0;
         this.visible = true;
         this.active = false;
@@ -31,57 +28,41 @@ public class SpeedBoost extends PowerUp {
         this.done = false;
     }
 
-    void boostTankSpeed(Tank tank) {
-        tank.setSpeed(4);
+    @Override
+    public int getX() {
+        return x;
     }
 
-    int getPowerUpTickCount() {
-        return powerUpTickCount;
+    @Override
+    public void setX(int x) {
+        this.x = x;
+    }
+
+    @Override
+    public int getY() {
+        return y;
+    }
+
+    @Override
+    public void setY(int y) {
+        this.y = y;
+    }
+
+    @Override
+    public Rectangle getHitBox() {
+        return hitBox.getBounds();
     }
 
     public void setPowerUpTickCount(int powerUpTickCount) {
         this.powerUpTickCount = powerUpTickCount;
     }
 
-    /*void resetTankSpeed(String owner) {
-        gameobject.Tank tank;
-        if ("tankOne".equals(owner)) {
-            tank = game.TankGame.tankOne
-        }
-
-    }*/
-
-    @Override
-    public String getOwner() {
-        return owner;
-    }
-
-    @Override
     public void setOwner(String owner) {
         this.owner = owner;
     }
 
-    public String getObjectType() {
-        return objectType;
-    }
-
-    @Override
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    @Override
-    public boolean isActive() {
-        return active;
-    }
-
-    @Override
-    public boolean isVisible() {
-        return visible;
-    }
-
-    public boolean isDone() {
-        return done;
     }
 
     @Override
@@ -89,10 +70,14 @@ public class SpeedBoost extends PowerUp {
         this.visible = visible;
     }
 
+    public boolean isDone() {
+        return done;
+    }
+
     @Override
     public void drawImage(Graphics g) {
         if (visible) {
-            Graphics2D g2 = (Graphics2D)g;
+            Graphics2D g2 = (Graphics2D) g;
             g2.drawImage(this.speedBoostImage, x, y, null);
         }
     }
@@ -109,28 +94,5 @@ public class SpeedBoost extends PowerUp {
         }
     }
 
-    @Override
-    public int getX() {
-        return x;
-    }
 
-    @Override
-    public int getY() {
-        return y;
-    }
-
-    @Override
-    public Rectangle getHitBox() {
-        return hitBox.getBounds();
-    }
-
-    @Override
-    public void setX(int x) {
-        this.x = x;
-    }
-
-    @Override
-    public void setY(int y) {
-        this.y = y;
-    }
 }

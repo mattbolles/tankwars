@@ -1,7 +1,6 @@
 package gameobject;
 
-import game.*;
-import gameobject.*;
+import game.TankGame;
 import gameobject.weapon.Bullet;
 import resource.GameInfo;
 import resource.Resource;
@@ -12,7 +11,6 @@ import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 /**
- *
  * @author anthony-pc
  */
 public class Tank extends GameObject {
@@ -20,37 +18,29 @@ public class Tank extends GameObject {
 
     private int x;
     private int y;
-    private int rightCorner = x + 50;
-    private int leftCorner = y + 50;
     private int vx;
     private int vy;
     private int angle;
-    private int width;
-    private int height;
-    private int oldX;
-    private int oldY;
-    // R from trig - higher the value, faster it rotates
-    private int R = 3;
+    private int R = 3; // R from trig - higher the value, faster it goes
     private int health = 100;
     private int healthTickCount = 0;
     private final int ROTATION_SPEED = 3;
     private Rectangle hitBox; // for collision detection
     private ArrayList<Bullet> bulletList;
-    private ArrayList<Bullet> explodedBulletList;
     private BufferedImage tankImage;
     private boolean UpPressed;
     private boolean DownPressed;
     private boolean RightPressed;
     private boolean LeftPressed;
     private boolean ShootPressed;
-    String objectType = "tank";
+    String objectType;
     private boolean isStopped = false;
     private TankGame tankGame;
     private String owner;
     int lives = 3;
     public boolean completelyKilled = false;
     public String currentPowerUp;
-    public boolean hasPowerUp; // if has active powerup
+    public boolean hasPowerUp;
     public int currentPowerUpTickCount;
 
 
@@ -64,14 +54,12 @@ public class Tank extends GameObject {
         this.owner = owner;
         this.tankGame = tankGame;
         // puts hitbox in location of tank, dimensions are same as tank image
-        this.hitBox = new Rectangle(x + vx,y + vy,this.tankImage.getWidth(), this.tankImage.getHeight());
+        this.hitBox = new Rectangle(x + vx, y + vy, this.tankImage.getWidth(), this.tankImage.getHeight());
         this.bulletList = new ArrayList<>();
-        this.explodedBulletList = new ArrayList<>();
         this.objectType = "tank";
         this.currentPowerUp = "none";
         this.hasPowerUp = false;
         this.currentPowerUpTickCount = 0;
-        //need to add generic weapon implementation
     }
 
     public void setTankGame(TankGame tankGame) {
@@ -80,10 +68,6 @@ public class Tank extends GameObject {
 
     public void setAngle(int angle) {
         this.angle = angle;
-    }
-
-    boolean hasPowerUp() {
-        return hasPowerUp;
     }
 
     public void setCurrentPowerUp(String currentPowerUp) {
@@ -132,18 +116,9 @@ public class Tank extends GameObject {
         }
     }
 
-    boolean getCompletelyKilled() {
-        return completelyKilled;
-    }
-
     public void setIsStopped(boolean isStopped) {
         this.isStopped = isStopped;
     }
-
-    public String getObjectType() {
-        return objectType;
-    }
-
 
     public void toggleUpPressed() {
         this.UpPressed = true;
@@ -238,28 +213,8 @@ public class Tank extends GameObject {
         this.vx = vx;
     }
 
-    public int getVx() {
-        return vx;
-    }
-
     public void setVy(int vy) {
         this.vy = vy;
-    }
-
-    public int getVy() {
-        return vy;
-    }
-
-    public boolean isUpPressed() {
-        return UpPressed;
-    }
-
-    public boolean isDownPressed() {
-        return DownPressed;
-    }
-
-    public void setOwner(String owner) {
-        this.owner = owner;
     }
 
     public String getOwner() {
@@ -286,14 +241,8 @@ public class Tank extends GameObject {
 
         if (this.ShootPressed && TankGame.tickCounter % 20 == 0) {
             addBullet(x + vx, y + vy, vx, vy, angle, tankGame);
-            //gameobject.weapon.Bullet bullet = new gameobject.weapon.Bullet(x + vx, y + vy, angle, resource.Resource.getResourceImage("bullet"), owner);
-            //tankGame.addGameObject(bullet);
-
         }
 
-       /*if (this.ShootPressed = false) {
-           game.TankGame.tickCounter = 20;
-       }*/
         this.isStopped = false;
         if (hasPowerUp) {
             currentPowerUpTickCount++;
@@ -309,19 +258,7 @@ public class Tank extends GameObject {
                 }
             }
         }
-       /*this.bulletList.forEach(bullet -> bullet.update());
-       for (gameobject.weapon.Bullet bullet : this.bulletList) {
-               if (bullet.isExploded()) {
-                   this.explodedBulletList.add(bullet);
-               }
-       }
-       bulletList.removeAll(explodedBulletList);*/
         this.hitBox.setLocation(x + vx, y + vy);
-
-    }
-
-    public ArrayList<Bullet> getBulletList() {
-        return this.bulletList;
     }
 
     private void rotateLeft() {
@@ -355,15 +292,6 @@ public class Tank extends GameObject {
         checkBorder();
         // take into account momentum to prevent tank from getting stuck
         this.hitBox.setLocation(x + vx, y + vy);
-    }
-
-
-    public int getAngle() {
-        return this.angle;
-    }
-
-    private void shoot() {
-        // yeah we're gonna need to add this later
     }
 
 
@@ -420,7 +348,6 @@ public class Tank extends GameObject {
         return cameraY;
     }
 
-
     @Override
     public void drawImage(Graphics g) {
         AffineTransform rotation = AffineTransform.getTranslateInstance(x, y);
@@ -429,11 +356,5 @@ public class Tank extends GameObject {
         Graphics2D g2d = (Graphics2D) g;
         g2d.drawImage(this.tankImage, rotation, null);
         this.bulletList.forEach(bullet -> bullet.drawImage(g));
-        // draw hitbox in yellow
-       /*g2d.setColor(Color.YELLOW);
-       g2d.drawRect(x,y,this.tankImage.getWidth(),this.tankImage.getHeight());*/
     }
-
-
-
 }

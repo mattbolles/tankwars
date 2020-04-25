@@ -1,6 +1,7 @@
 package game;
 
-import gameobject.*;
+import gameobject.GameObject;
+import gameobject.Tank;
 import gameobject.powerup.SpeedBoost;
 import gameobject.wall.BreakableWall;
 import gameobject.wall.UnBreakableWall;
@@ -21,20 +22,15 @@ import java.util.ArrayList;
 /**
  * Main tank game driver.
  */
-public class TankGame extends JPanel  {
+public class TankGame extends JPanel {
 
 
-    private BufferedImage world;
-    private Background backgroundTile;
-    private Graphics2D buffer;
-    private JFrame jFrame;
-    private JFrame newJFrame;
+    public static long tickCounter = 0;
     static int mouseClickX;
     static int mouseClickY;
     static int mouseLocationX;
     static int mouseLocationY;
     static boolean gamePaused = false;
-    public static long tickCounter = 0;
     static GameState currentState;
     static StartScreen startScreen;
     static GameOverScreen gameOverScreen;
@@ -43,10 +39,11 @@ public class TankGame extends JPanel  {
     ArrayList<GameObject> gameObjects;
     Tank tankOne = new Tank(GameInfo.tankOneXSpawnCoord, GameInfo.tankOneYSpawnCoord, 0, 0, 0, Resource.getResourceImage("tankOne"),
             "tankOne", this);
-    Tank tankTwo = new Tank(GameInfo.tankTwoXSpawnCoord, GameInfo.tankTwoYSpawnCoord,0, 0, 180,
+    Tank tankTwo = new Tank(GameInfo.tankTwoXSpawnCoord, GameInfo.tankTwoYSpawnCoord, 0, 0, 180,
             Resource.getResourceImage("tankTwo"), "tankTwo", this);
-
-
+    private BufferedImage world;
+    private Background backgroundTile;
+    private JFrame jFrame;
 
     public static void main(String[] args) {
         TankGame tankGame = new TankGame();
@@ -57,7 +54,6 @@ public class TankGame extends JPanel  {
         gameOverScreen.init();
         TankGame.currentState = GameState.START;
         while (true) {
-            // switching to if statements breaks this
             switch (currentState) {
                 case START:
                     TankGame.continuousMusicPlayer.setStarted(false);
@@ -105,6 +101,21 @@ public class TankGame extends JPanel  {
         }
     }
 
+    public void setJFrameVisible(boolean visible) {
+        this.jFrame.setVisible(visible);
+    }
+
+    public void addGameObject(GameObject objectToAdd) {
+        this.gameObjects.add(objectToAdd);
+    }
+
+    public GameState getCurrentState() {
+        return currentState;
+    }
+
+    public void setCurrentState(GameState state) {
+        currentState = state;
+    }
 
     private void init() {
         this.jFrame = new JFrame("Tank Wars");
@@ -113,16 +124,16 @@ public class TankGame extends JPanel  {
         //listen for mouse click
         this.jFrame.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
-                    mouseClickX = mouseEvent.getX();
-                    mouseClickY = mouseEvent.getY();
+                mouseClickX = mouseEvent.getX();
+                mouseClickY = mouseEvent.getY();
             }
         });
 
         //listen for mouse movement
         this.jFrame.addMouseMotionListener(new MouseAdapter() {
             public void mouseMoved(MouseEvent mouseEvent) {
-                    mouseLocationX = mouseEvent.getX();
-                    mouseLocationY = mouseEvent.getY();
+                mouseLocationX = mouseEvent.getX();
+                mouseLocationY = mouseEvent.getY();
             }
         });
         try {
@@ -131,7 +142,7 @@ public class TankGame extends JPanel  {
             int backgroundHeight = Resource.getResourceImage("background").getHeight();
             backgroundTile = new Background(backgroundWidth, backgroundHeight, Resource.getResourceImage("background"));
 
-            //for reading maps - make into seperate function
+            //for reading maps
             InputStreamReader inputStreamReader = new InputStreamReader(TankGame.class.getClassLoader().getResourceAsStream("maps/map1"));
             BufferedReader mapReader = new BufferedReader(inputStreamReader);
 
@@ -150,22 +161,24 @@ public class TankGame extends JPanel  {
                 mapInfo = row.split("\t");
                 //go column by column for each row
                 for (int currentCol = 0; currentCol < numOfCols; currentCol++) {
-                    switch(mapInfo[currentCol]) {
+                    switch (mapInfo[currentCol]) {
                         case "4":
                             //speed boost
-                            this.gameObjects.add(new SpeedBoost(currentCol*32, currentRow*32,
-                                    Resource.getResourceImage("speedBoost"), 6000));
+                            this.gameObjects.add(new SpeedBoost(currentCol * 32, currentRow * 32,
+                                    Resource.getResourceImage("speedBoost")));
                             break;
+
                         case "2":
                             //breakable wall
                             //mult by 32 since wall tile is 32x32 pixels
-                            this.gameObjects.add(new BreakableWall(currentCol*32, currentRow*32,
+                            this.gameObjects.add(new BreakableWall(currentCol * 32, currentRow * 32,
                                     Resource.getResourceImage("breakableWall")));
                             break;
+
                         case "3":
                         case "9":
                             //unbreakable wall
-                            this.gameObjects.add(new UnBreakableWall(currentCol*32, currentRow*32,
+                            this.gameObjects.add(new UnBreakableWall(currentCol * 32, currentRow * 32,
                                     Resource.getResourceImage("unBreakableWall")));
 
                         default:
@@ -212,11 +225,11 @@ public class TankGame extends JPanel  {
 
     public void resetJFrame() {
         // create temp jframe to avoid JVM closing
-        newJFrame = new JFrame("Loading...");
+        JFrame tempJFrame = new JFrame("Loading...");
         this.jFrame.dispose();
         this.gameObjects.clear();
         init();
-        this.newJFrame.dispose();
+        tempJFrame.dispose();
     }
 
     public void resetTanks() {
@@ -250,10 +263,6 @@ public class TankGame extends JPanel  {
         tankOne.setTankGame(this);
     }
 
-    public void setJFrameVisible(boolean visible) {
-        this.jFrame.setVisible(visible);
-    }
-
 
     public void runGame(TankGame tankGame) {
         if (!gamePaused) {
@@ -270,15 +279,11 @@ public class TankGame extends JPanel  {
                         } else {
                             currentGameObject.update();
                         }
-                    }
-
-                    else if (currentGameObject instanceof BreakableWall) {
+                    } else if (currentGameObject instanceof BreakableWall) {
                         if (((BreakableWall) currentGameObject).getHealth() <= 0) {
                             tankGame.gameObjects.remove(currentGameObjectIndex);
                         }
-                    }
-
-                    else if (currentGameObject instanceof Tank) {
+                    } else if (currentGameObject instanceof Tank) {
                         if (((Tank) currentGameObject).getHealth() <= 0) {
                             // if tank is not dead
                             if (!((Tank) currentGameObject).completelyKilled) {
@@ -293,9 +298,7 @@ public class TankGame extends JPanel  {
                                 setCurrentState(GameState.GAME_OVER);
                             }
                         }
-                    }
-
-                    else if (currentGameObject instanceof SpeedBoost) {
+                    } else if (currentGameObject instanceof SpeedBoost) {
                         //if not visible and not active, remove
                         if (((SpeedBoost) currentGameObject).isDone()) {
                             tankGame.gameObjects.remove(currentGameObject);
@@ -317,24 +320,12 @@ public class TankGame extends JPanel  {
     }
 
 
-    public void addGameObject(GameObject objectToAdd) {
-        this.gameObjects.add(objectToAdd);
-    }
-
-    public void setCurrentState(GameState state) {
-        currentState = state;
-    }
-
-    public GameState getCurrentState() {
-        return currentState;
-    }
-
     private void drawPlayerOneInfo(Graphics g2) {
         g2.setColor(Color.BLACK);
         g2.fillRect(40, 40, 110, 80);
         //draw power up if tank has one
         if (tankOne.hasPowerUp) {
-            g2.fillRect(40,120, 110, 35);
+            g2.fillRect(40, 120, 110, 35);
             if ("speedBoost".equals(tankOne.currentPowerUp)) {
                 g2.drawImage(Resource.getResourceImage("speedBoostIcon"), 45, 125, null);
                 g2.setColor(Color.WHITE);
@@ -342,8 +333,7 @@ public class TankGame extends JPanel  {
                 g2.setColor(Color.CYAN);
                 g2.drawRect(39, 39, 112, 117);
             }
-        }
-        else if ("none".equals(tankOne.currentPowerUp)) {
+        } else if ("none".equals(tankOne.currentPowerUp)) {
             g2.setColor(Color.CYAN);
             g2.drawRect(39, 39, 112, 82);
         }
@@ -380,8 +370,7 @@ public class TankGame extends JPanel  {
                 g2.setColor(Color.PINK);
                 g2.drawRect(GameInfo.SCREEN_WIDTH - 151, GameInfo.SCREEN_HEIGHT - 166, 112, 117);
             }
-        }
-        else if ("none".equals(tankTwo.currentPowerUp)) {
+        } else if ("none".equals(tankTwo.currentPowerUp)) {
             g2.setColor(Color.PINK);
             g2.drawRect(GameInfo.SCREEN_WIDTH - 151, GameInfo.SCREEN_HEIGHT - 131, 112, 82);
         }
@@ -401,11 +390,12 @@ public class TankGame extends JPanel  {
                     GameInfo.SCREEN_HEIGHT - 80, null);
         }
     }
+
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         super.paintComponent(g2);
-        buffer = world.createGraphics();
+        Graphics2D buffer = world.createGraphics();
 
         if (currentState == GameState.RUNNING) {
             buffer.setColor(Color.BLACK);

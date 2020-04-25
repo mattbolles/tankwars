@@ -37,10 +37,6 @@ public class Resource {
             // abandon ship if resources don't work
             System.exit(-5);
         }
-
-
-
-
     }
 
     public static Font infoFontBold = new Font("Helvetica", Font.BOLD, 19);

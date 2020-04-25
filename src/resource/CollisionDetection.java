@@ -34,9 +34,7 @@ public class CollisionDetection{
                 GameObject anotherGameObject = gameObjects.get(anotherGameObjectIndex);
                 // make sure they're not the same
                 if (currentGameObject != anotherGameObject) {
-                    boolean collisionDetected =
-                            currentGameObject.getHitBox().getBounds().intersects(anotherGameObject.getHitBox().getBounds());
-                    // if collision is detected between the two
+                    boolean collisionDetected = currentGameObject.getHitBox().getBounds().intersects(anotherGameObject.getHitBox().getBounds());
                     if (collisionDetected) {
                         // if tank colliding with something
                         if (currentGameObject instanceof Tank) {

@@ -27,14 +27,14 @@ Shoot: Enter/Return
 
 ##How To Run
 
-####Via Command Line / Terminal
+**Via Command Line / Terminal**
 1. Download [`TankGame.jar`](jar/TankGame.jar) and save to your computer.
 2. In the terminal, navigate to the folder where [`TankGame.jar`](jar/TankGame.jar) is located.
 3. Enter the following command:
 ```java -jar TankGame.jar```
 4. Enjoy!
 
-####Via IntelliJ
+**Via IntelliJ**
 1. Select `File` > `New` > `Project From Version Control`.
 2. On the [GitHub page](https://github.com/csc413-01-spring2020/csc413-tankgame-mattbolles), click `Clone or Download
 ` and copy the given address.

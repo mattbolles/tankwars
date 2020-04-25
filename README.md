@@ -8,21 +8,7 @@
 [Link](https://github.com/csc413-01-spring2020/csc413-tankgame-mattbolles)
 
 Relative Directory: `csc413-tankgame-mattbolles-master`
-## Controls
 
-**Player One**
-* Move Forward: W
-* Move Backward: S
-* Rotate Left: A
-* Rotate Right: D
-* Shoot: Space
-
-**Player Two**
-* Move Forward: Up
-* Move Backward: Down
-* Rotate Left: Left
-* Rotate Right: Right
-* Shoot: Enter / Return
 
 ##How To Run
 
@@ -47,5 +33,20 @@ Relative Directory: `csc413-tankgame-mattbolles-master`
 8. Right click `TankGame.jar` and select `Run TankGame.jar` (it will have a green play button next to it).
 9. Enjoy!
 
+## Controls
+
+**Player One**
+* Move Forward: W
+* Move Backward: S
+* Rotate Left: A
+* Rotate Right: D
+* Shoot: Space
+
+**Player Two**
+* Move Forward: Up
+* Move Backward: Down
+* Rotate Left: Left
+* Rotate Right: Right
+* Shoot: Enter / Return
 
 

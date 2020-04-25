@@ -10,18 +10,20 @@ public class SpeedBoost extends PowerUp {
     BufferedImage speedBoostImage;
     int duration;
     int powerUpTickCount;
+    boolean done;
 
     public SpeedBoost(int x, int y, BufferedImage speedBoostImage, int duration) {
         this.x = x;
         this.y = y;
         this.owner = "none";
-        this.duration = 2000; //ticks
+        this.duration = 2000; //ticks / ms
         this.powerUpTickCount = 0;
         this.visible = true;
         this.active = false;
         this.objectType = "speedBoost";
         this.speedBoostImage = speedBoostImage;
         this.hitBox = new Rectangle(x, y, this.speedBoostImage.getWidth(), this.speedBoostImage.getHeight());
+        this.done = false;
     }
 
     void boostTankSpeed(Tank tank) {
@@ -73,6 +75,10 @@ public class SpeedBoost extends PowerUp {
         return visible;
     }
 
+    public boolean isDone() {
+        return done;
+    }
+
     @Override
     public void setVisible(boolean visible) {
         this.visible = visible;
@@ -94,6 +100,7 @@ public class SpeedBoost extends PowerUp {
 
         if (powerUpTickCount > duration) {
             this.setActive(false);
+            done = true;
         }
     }
 

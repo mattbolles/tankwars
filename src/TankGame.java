@@ -10,12 +10,7 @@ import java.io.InputStreamReader;
 import java.util.ArrayList;
 
 /**
- * Main driver class of Tank Example.
- * Class is responsible for loading resources and
- * initializing game objects. Once completed, control will
- * be given to infinite loop which will act as our game loop.
- * A very simple game loop.
- * @author anthony-pc
+ * Main tank game driver.
  */
 public class TankGame extends JPanel  {
 
@@ -35,18 +30,15 @@ public class TankGame extends JPanel  {
     static StartScreen startScreen;
     static GameOverScreen gameOverScreen;
     static SoundPlayer continuousMusicPlayer = new SoundPlayer(1,"music.wav", false);
-    //static SoundPlayer soundEffectPlayer;
+    static CollisionDetection collisionDetector = new CollisionDetection();
     ArrayList<GameObject> gameObjects;
     Tank tankOne = new Tank(GameInfo.tankOneXSpawnCoord, GameInfo.tankOneYSpawnCoord, 0, 0, 0, Resource.getResourceImage("tankOne"),
             "tankOne", this);
     Tank tankTwo = new Tank(GameInfo.tankTwoXSpawnCoord, GameInfo.tankTwoYSpawnCoord,0, 0, 180,
             Resource.getResourceImage("tankTwo"), "tankTwo", this);
-    static CollisionDetection collisionDetector = new CollisionDetection();
 
 
 
-
-    // make this gameLoop() or something later
     public static void main(String[] args) {
         TankGame tankGame = new TankGame();
         tankGame.init();
@@ -61,7 +53,6 @@ public class TankGame extends JPanel  {
                 // switching to if statements breaks this
                 switch (currentState) {
                     case START:
-                        System.out.println("case start");
                         TankGame.continuousMusicPlayer.setStarted(false);
                         TankGame.continuousMusicPlayer.stop();
                         tankGame.setJFrameVisible(false);
@@ -74,13 +65,11 @@ public class TankGame extends JPanel  {
                         break;
 
                     case RUNNING:
-                        System.out.println("case running");
                         TankGame.continuousMusicPlayer.setStarted(true);
                         TankGame.continuousMusicPlayer.play();
                         startScreen.setJFrameVisible(false);
                         gameOverScreen.setJFrameVisible(false);
                         tankGame.jFrame.setVisible(true);
-                        //continuousMusicPlayer.play();
                         while (currentState == GameState.RUNNING) {
                             currentState = tankGame.getCurrentState();
                             tankGame.runGame(tankGame);
@@ -88,7 +77,6 @@ public class TankGame extends JPanel  {
                         break;
 
                     case GAME_OVER:
-                        System.out.println("case gameover");
                         TankGame.continuousMusicPlayer.setStarted(false);
                         TankGame.continuousMusicPlayer.stop();
                         startScreen.setJFrameVisible(false);
@@ -101,34 +89,13 @@ public class TankGame extends JPanel  {
                         break;
 
                     case RESET:
-                        System.out.println("case reset");
                         tankGame.resetTanks();
                         tankGame.resetJFrame();
                         tankGame.init();
                         tankGame.setCurrentState(GameState.RUNNING);
-                        /*tankGame.resetTanks();
-                        TankGame.continuousMusicPlayer.setStarted(true);
-                        TankGame.continuousMusicPlayer.play();
-                        startScreen.setJFrameVisible(false);
-                        gameOverScreen.setJFrameVisible(false);
-                        tankGame.resetJFrame();
-                        tankGame.jFrame.setVisible(true);
-                        //continuousMusicPlayer.play();
-                        while (currentState == GameState.RUNNING) {
-                            currentState = tankGame.getCurrentState();
-                            tankGame.runGame(tankGame);
-                        }*/
                         break;
                 }
             }
-        //}
-        /*catch (Exception ignored) {
-            System.out.println(ignored);
-        }*/
-    }
-
-    public void gameStatusLoop(TankGame tankGame) {
-
     }
 
 
@@ -143,27 +110,20 @@ public class TankGame extends JPanel  {
         //listen for mouse click
         this.jFrame.addMouseListener(new MouseAdapter() {
             public void mousePressed(MouseEvent mouseEvent) {
-                    //System.out.println("click from main");
                     mouseClickX = mouseEvent.getX();
-                    //System.out.println("x: " + mouseClickX);
                     mouseClickY = mouseEvent.getY();
-                    //System.out.println("y: " + mouseClickY);
             }
         });
 
         //listen for mouse movement
         this.jFrame.addMouseMotionListener(new MouseAdapter() {
             public void mouseMoved(MouseEvent mouseEvent) {
-                    //System.out.println("move from main");
                     mouseLocationX = mouseEvent.getX();
-                    //System.out.println("x: " + mouseLocationX);
                     mouseLocationY = mouseEvent.getY();
-                    //System.out.println("y: " + mouseLocationY);
             }
         });
-        // change this to start once we get the start menu working
         try {
-            //background info - generify later:
+            //background info
             int backgroundWidth = Resource.getResourceImage("background").getWidth();
             int backgroundHeight = Resource.getResourceImage("background").getHeight();
             backgroundTile = new Background(backgroundWidth, backgroundHeight, Resource.getResourceImage("background"));
@@ -189,7 +149,7 @@ public class TankGame extends JPanel  {
                 for (int currentCol = 0; currentCol < numOfCols; currentCol++) {
                     switch(mapInfo[currentCol]) {
                         case "4":
-                            //speedboost
+                            //speed boost
                             this.gameObjects.add(new SpeedBoost(currentCol*32, currentRow*32,
                                     Resource.getResourceImage("speedBoost"), 6000));
                             break;
@@ -234,8 +194,6 @@ public class TankGame extends JPanel  {
                 KeyEvent.VK_RIGHT,
                 KeyEvent.VK_ENTER);
 
-
-
         this.jFrame.setLayout(new BorderLayout());
         this.jFrame.add(this);
         this.jFrame.addKeyListener(tankOneControl);
@@ -245,12 +203,6 @@ public class TankGame extends JPanel  {
         this.jFrame.setLocationRelativeTo(null);
         this.jFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.jFrame.setVisible(false);
-
-
-        // background music
-        SoundPlayer continuousMusicPlayer = new SoundPlayer(1,"music.wav", false);
-
-
     }
 
     public void resetJFrame() {
@@ -272,6 +224,8 @@ public class TankGame extends JPanel  {
         tankOne.setAngle(0);
         tankOne.setCurrentPowerUpTickCount(0);
         tankOne.setCurrentPowerUp("none");
+        tankOne.hasPowerUp = false;
+        tankOne.setSpeed(3);
         tankOne.unToggleShootPressed();
         tankOne.setCompletelyKilled(false);
         tankOne.setTankGame(this);
@@ -284,6 +238,8 @@ public class TankGame extends JPanel  {
         tankTwo.setAngle(180);
         tankTwo.setCurrentPowerUpTickCount(0);
         tankTwo.setCurrentPowerUp("none");
+        tankTwo.hasPowerUp = false;
+        tankTwo.setSpeed(3);
         tankTwo.unToggleShootPressed();
         tankTwo.setCompletelyKilled(false);
         tankOne.setTankGame(this);
@@ -335,10 +291,9 @@ public class TankGame extends JPanel  {
 
                     else if (currentGameObject instanceof SpeedBoost) {
                         //if not visible and not active, remove
-                        if (!"none".equals(((SpeedBoost) currentGameObject).getOwner()) && !((SpeedBoost) currentGameObject).isActive()) {
+                        if (((SpeedBoost) currentGameObject).isDone()) {
                             tankGame.gameObjects.remove(currentGameObject);
                         }
-
                     }
                 }
 
@@ -346,6 +301,7 @@ public class TankGame extends JPanel  {
                 for (int i = 0; i < tankGame.gameObjects.size(); i++) {
                     tankGame.gameObjects.get(i).update();
                 }
+
                 tickCounter++;
                 Thread.sleep(1000 / 144);
             } catch (InterruptedException ignored) {
@@ -367,18 +323,83 @@ public class TankGame extends JPanel  {
         return currentState;
     }
 
+    private void drawPlayerOneInfo(Graphics g2) {
+        g2.setColor(Color.BLACK);
+        g2.fillRect(40, 40, 110, 80);
+        //draw power up if tank has one
+        if (tankOne.hasPowerUp) {
+            g2.fillRect(40,120, 110, 35);
+            if ("speedBoost".equals(tankOne.currentPowerUp)) {
+                g2.drawImage(Resource.getResourceImage("speedBoostIcon"), 45, 125, null);
+                g2.setColor(Color.WHITE);
+                g2.fillRect(75, 130, 60 - (tankOne.currentPowerUpTickCount / 33), 15);
+                g2.setColor(Color.CYAN);
+                g2.drawRect(39, 39, 112, 117);
+            }
+        }
+        else if ("none".equals(tankOne.currentPowerUp)) {
+            g2.setColor(Color.CYAN);
+            g2.drawRect(39, 39, 112, 82);
+        }
+        g2.setFont(Resource.infoFontBold);
+        g2.setColor(Color.CYAN);
+        g2.drawString("Player One", 45, 60);
+        g2.setColor(Color.WHITE);
+        if (tankOne.getHealth() <= 60 && tankOne.getHealth() > 25) {
+            g2.setColor(Color.YELLOW);
+        } else if (tankOne.getHealth() <= 25) {
+            g2.setColor(Color.RED);
+        }
+        //health bar
+        g2.fillRect(45, 68, tankOne.getHealth(), 15);
+        //draw lives
+        g2.setColor(Color.WHITE);
+        for (int i = 0; i < tankOne.getLives(); i++) {
+            g2.drawImage(Resource.getResourceImage("tank1life"), 45 + (37 * i), 90, null);
+        }
+    }
+
+    private void drawPlayerTwoInfo(Graphics g2) {
+        g2.setColor(Color.BLACK);
+        g2.fillRect(GameInfo.SCREEN_WIDTH - 150, GameInfo.SCREEN_HEIGHT - 130, 110, 80);
+        //power up status
+        if (tankTwo.hasPowerUp) {
+            g2.fillRect(GameInfo.SCREEN_WIDTH - 150,GameInfo.SCREEN_HEIGHT - 165, 110, 35);
+            if ("speedBoost".equals(tankTwo.currentPowerUp)) {
+                g2.drawImage(Resource.getResourceImage("speedBoostIcon"), GameInfo.SCREEN_WIDTH - 145,
+                        GameInfo.SCREEN_HEIGHT - 160, null);
+                g2.setColor(Color.WHITE);
+                g2.fillRect(GameInfo.SCREEN_WIDTH - 115, GameInfo.SCREEN_HEIGHT - 155,
+                        60 - (tankTwo.currentPowerUpTickCount / 33), 15);
+                g2.setColor(Color.PINK);
+                g2.drawRect(GameInfo.SCREEN_WIDTH - 151, GameInfo.SCREEN_HEIGHT - 166, 112, 117);
+            }
+        }
+        else if ("none".equals(tankTwo.currentPowerUp)) {
+            g2.setColor(Color.PINK);
+            g2.drawRect(GameInfo.SCREEN_WIDTH - 151, GameInfo.SCREEN_HEIGHT - 131, 112, 82);
+        }
+        g2.setFont(Resource.infoFontBold);
+        g2.setColor(Color.PINK);
+        g2.drawString("Player Two", GameInfo.SCREEN_WIDTH - 145, GameInfo.SCREEN_HEIGHT - 110);
+        g2.setColor(Color.WHITE);
+        if (tankTwo.getHealth() <= 60 && tankTwo.getHealth() > 25) {
+            g2.setColor(Color.YELLOW);
+        } else if (tankTwo.getHealth() <= 25) {
+            g2.setColor(Color.RED);
+        }
+        g2.fillRect(GameInfo.SCREEN_WIDTH - 145, GameInfo.SCREEN_HEIGHT - 102, tankTwo.getHealth(), 15);
+        g2.setColor(Color.WHITE);
+        for (int i = 0; i < tankTwo.getLives(); i++) {
+            g2.drawImage(Resource.getResourceImage("tank2life"), GameInfo.SCREEN_WIDTH - 145 + (37 * i),
+                    GameInfo.SCREEN_HEIGHT - 80, null);
+        }
+    }
     @Override
     public void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g;
         super.paintComponent(g2);
         buffer = world.createGraphics();
-        /*if (currentState == GameState.START) {
-            startScreen.drawImage(g2);
-        }*/
-
-        /*else if (currentState == GameState.GAME_OVER) {
-            gameOverScreen.drawImage(g2);
-        }*/
 
         if (currentState == GameState.RUNNING) {
             buffer.setColor(Color.BLACK);
@@ -387,78 +408,25 @@ public class TankGame extends JPanel  {
             // draw background tiles
             this.backgroundTile.drawImage(buffer);
             //draw all game objects
-            //this.gameObjects.forEach(gameObject -> gameObject.drawImage(buffer));
-            for (GameObject gameObject : this.gameObjects) {
-                gameObject.drawImage(buffer);
+            for (int i = 0; i < gameObjects.size(); i++) {
+                gameObjects.get(i).drawImage(buffer);
             }
+            //split screen
             BufferedImage leftScreenHalf = world.getSubimage(tankOne.getCameraX(), tankOne.getCameraY(),
                     GameInfo.SCREEN_WIDTH / 2, GameInfo.SCREEN_HEIGHT);
             BufferedImage rightScreenHalf = world.getSubimage(tankTwo.getCameraX(), tankTwo.getCameraY(),
                     GameInfo.SCREEN_WIDTH / 2, GameInfo.SCREEN_HEIGHT);
-            BufferedImage miniMap = world.getSubimage(0, 0, GameInfo.WORLD_WIDTH, GameInfo.WORLD_HEIGHT);
             g2.drawImage(leftScreenHalf, 0, 0, null);
             g2.drawImage(rightScreenHalf, GameInfo.SCREEN_WIDTH / 2 + 4, 0, null);
+            //mini map
 
-            //draw lives etc - put in seperate function later
-            //p1
-            g2.fillRect(40, 40, 110, 80);
-            if (tankOne.hasPowerUp) {
-                g2.fillRect(40,120, 110, 35);
-                if ("speedBoost".equals(tankOne.currentPowerUp)) {
-                    g2.drawImage(Resource.getResourceImage("speedBoostIcon"), 45, 125, null);
-                    g2.setColor(Color.WHITE);
-                    g2.fillRect(75, 130, 60 - (tankOne.currentPowerUpTickCount / 33), 15);
-                    g2.setColor(Color.CYAN);
-                    g2.drawRect(39, 39, 112, 117);
-                }
-            }
-            else if ("none".equals(tankOne.currentPowerUp)) {
-                g2.setColor(Color.CYAN);
-                g2.drawRect(39, 39, 112, 82);
-            }
-            g2.setFont(Resource.infoFontBold);
-            // change to accurate color when you make this a seperate function
-            g2.setColor(Color.CYAN);
-            g2.drawString("Player One", 45, 60);
-            g2.setColor(Color.WHITE);
-            if (tankOne.getHealth() <= 60 && tankOne.getHealth() > 25) {
-                g2.setColor(Color.YELLOW);
-            } else if (tankOne.getHealth() <= 25) {
-                g2.setColor(Color.RED);
-            }
-            g2.fillRect(45, 68, tankOne.getHealth(), 15);
-            //g2.drawString(playerOneHealth, 1075, 820);
-            g2.setColor(Color.WHITE);
-            //g2.drawString(playerOneLives, 450, 1020);
-            for (int i = 0; i < tankOne.getLives(); i++) {
-                g2.drawImage(Resource.getResourceImage("tank1life"), 45 + (37 * i), 90, null);
-            }
+            //player info - lives etc
+            drawPlayerOneInfo(g2);
+            drawPlayerTwoInfo(g2);
 
-            //p2
-            g2.setColor(Color.BLACK);
-            g2.fillRect(GameInfo.SCREEN_WIDTH - 150, GameInfo.SCREEN_HEIGHT - 130, 110, 80);
-            g2.setColor(Color.WHITE);
-            g2.setFont(Resource.infoFontBold);
-            g2.setColor(Color.PINK);
-            g2.drawRect(GameInfo.SCREEN_WIDTH - 151, GameInfo.SCREEN_HEIGHT - 131, 112, 82);
-            g2.drawString("Player Two", GameInfo.SCREEN_WIDTH - 145, GameInfo.SCREEN_HEIGHT - 110);
-            g2.setColor(Color.WHITE);
-            if (tankTwo.getHealth() <= 60 && tankTwo.getHealth() > 25) {
-                g2.setColor(Color.YELLOW);
-            } else if (tankTwo.getHealth() <= 25) {
-                g2.setColor(Color.RED);
-            }
-            g2.fillRect(GameInfo.SCREEN_WIDTH - 145, GameInfo.SCREEN_HEIGHT - 102, tankTwo.getHealth(), 15);
-            //g2.drawString(playerOneHealth, 1075, 820);
-            g2.setColor(Color.WHITE);
-            //g2.drawString(playerOneLives, 450, 1020);
-            for (int i = 0; i < tankTwo.getLives(); i++) {
-                g2.drawImage(Resource.getResourceImage("tank2life"), GameInfo.SCREEN_WIDTH - 145 + (37 * i),
-                        GameInfo.SCREEN_HEIGHT - 80, null);
-            }
-
-
+            //draw minimap
             // put last so scale doesn't affect rest
+            BufferedImage miniMap = world.getSubimage(0, 0, GameInfo.WORLD_WIDTH, GameInfo.WORLD_HEIGHT);
             g2.scale(.09, .09);
             g2.drawImage(miniMap, 6100, 6400, null);
             g2.setColor(Color.WHITE);

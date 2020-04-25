@@ -10,19 +10,19 @@
 Relative Directory: `csc413-tankgame-mattbolles-master`
 ## Controls
 
-**Player One**\
-Move Forward: W\
-Move Backward: S\
-Rotate Left: A\
-Rotate Right: D\
-Shoot: Space
+**Player One**
+* Move Forward: W
+* Move Backward: S
+* Rotate Left: A
+* Rotate Right: D
+* Shoot: Space
 
-**Player Two**\
-Move Forward: Up\
-Move Backward: Down\
-Rotate Left: Left\
-Rotate Right: Right\
-Shoot: Enter / Return
+**Player Two**
+* Move Forward: Up
+* Move Backward: Down
+* Rotate Left: Left
+* Rotate Right: Right
+* Shoot: Enter / Return
 
 ##How To Run
 

@@ -1,7 +1,8 @@
+package gameobject;
+
 // generic object in game, anything that can be interacted with
 
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public abstract class GameObject {
     public abstract void drawImage(Graphics g);

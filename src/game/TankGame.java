@@ -1,3 +1,12 @@
+package game;
+
+import gameobject.*;
+import gameobject.powerup.SpeedBoost;
+import gameobject.wall.BreakableWall;
+import gameobject.wall.UnBreakableWall;
+import gameobject.weapon.Bullet;
+import resource.*;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.KeyEvent;
@@ -25,7 +34,7 @@ public class TankGame extends JPanel  {
     static int mouseLocationX;
     static int mouseLocationY;
     static boolean gamePaused = false;
-    static long tickCounter = 0;
+    public static long tickCounter = 0;
     static GameState currentState;
     static StartScreen startScreen;
     static GameOverScreen gameOverScreen;
@@ -249,6 +258,7 @@ public class TankGame extends JPanel  {
         this.jFrame.setVisible(visible);
     }
 
+
     public void runGame(TankGame tankGame) {
         if (!gamePaused) {
             try {
@@ -364,7 +374,7 @@ public class TankGame extends JPanel  {
         g2.fillRect(GameInfo.SCREEN_WIDTH - 150, GameInfo.SCREEN_HEIGHT - 130, 110, 80);
         //power up status
         if (tankTwo.hasPowerUp) {
-            g2.fillRect(GameInfo.SCREEN_WIDTH - 150,GameInfo.SCREEN_HEIGHT - 165, 110, 35);
+            g2.fillRect(GameInfo.SCREEN_WIDTH - 150, GameInfo.SCREEN_HEIGHT - 165, 110, 35);
             if ("speedBoost".equals(tankTwo.currentPowerUp)) {
                 g2.drawImage(Resource.getResourceImage("speedBoostIcon"), GameInfo.SCREEN_WIDTH - 145,
                         GameInfo.SCREEN_HEIGHT - 160, null);

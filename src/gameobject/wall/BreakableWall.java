@@ -1,12 +1,14 @@
+package gameobject.wall;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import resource.*;
 
 import static javax.imageio.ImageIO.read;
 
-public class BreakableWall extends Wall{
+public class BreakableWall extends Wall {
     int x, y, height, width;
     int health = 25; // the wall sustains damage, much like a tank. when health reaches 0, it is destroyed
-    CollisionDetection collisionDetection;
     BufferedImage wallImage;
     int tickCount = 0;
     int explosionTickCount = 0;

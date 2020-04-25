@@ -1,12 +1,15 @@
+package gameobject.powerup;
+
+import gameobject.GameObject;
+
 import java.awt.*;
-import java.awt.image.BufferedImage;
 
 public abstract class PowerUp extends GameObject {
     Rectangle hitBox;
     String objectType;
     String owner;
     boolean active;
-    boolean visible;
+    public boolean visible;
     int duration;
     int powerUpTickCount;
 

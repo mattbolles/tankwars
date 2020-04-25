@@ -1,3 +1,8 @@
+package gameobject.powerup;
+
+import gameobject.Tank;
+import gameobject.powerup.PowerUp;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 
@@ -34,14 +39,14 @@ public class SpeedBoost extends PowerUp {
         return powerUpTickCount;
     }
 
-    void setPowerUpTickCount(int powerUpTickCount) {
+    public void setPowerUpTickCount(int powerUpTickCount) {
         this.powerUpTickCount = powerUpTickCount;
     }
 
     /*void resetTankSpeed(String owner) {
-        Tank tank;
+        gameobject.Tank tank;
         if ("tankOne".equals(owner)) {
-            tank = TankGame.tankOne
+            tank = game.TankGame.tankOne
         }
 
     }*/

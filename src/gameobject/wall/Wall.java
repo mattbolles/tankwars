@@ -1,8 +1,12 @@
+package gameobject.wall;
+
+import gameobject.GameObject;
+
 import java.awt.*;
 
 public abstract class Wall extends GameObject {
-        Rectangle hitBox;
-        String objectType;
+        public Rectangle hitBox;
+        public String objectType;
 
         public abstract void drawImage(Graphics g);
         public abstract void update();

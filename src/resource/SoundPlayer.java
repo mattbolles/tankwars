@@ -1,8 +1,8 @@
+package resource;
 /**
- * Based off of SoundPlayer from Airstrike game by Anthony Souza.
+ * Based off of resource.SoundPlayer from Airstrike game by Anthony Souza.
  */
 
-import java.io.File;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.sound.sampled.AudioInputStream;
@@ -31,19 +31,22 @@ public class SoundPlayer {
             System.out.println(e.getMessage() + "No sound documents are found");
         }
         if(this.type == 1){
-            Runnable myRunnable = new Runnable(){
-                public void run(){
-                    if (started) {
-                        while (true) {
-                            clip.start();
-                            clip.loop(clip.LOOP_CONTINUOUSLY);
-                            try {
-                                Thread.sleep(10000);
-                            } catch (InterruptedException ex) {
-                                Logger.getLogger(SoundPlayer.class.getName()).log(Level.SEVERE, null, ex);
-                            }
+            Runnable myRunnable = () -> {
+                if (started) {
+                    try {
+                    while (true) {
+                        clip.start();
+                        clip.loop(clip.LOOP_CONTINUOUSLY);
+                        try {
+                            Thread.sleep(10000);
+                        } catch (InterruptedException ex) {
+                            Logger.getLogger(SoundPlayer.class.getName()).log(Level.SEVERE, null, ex);
                         }
                     }
+                    } catch (Exception ex) {
+                        Logger.getLogger(SoundPlayer.class.getName()).log(Level.SEVERE, null, ex);
+                    }
+
                 }
             };
             Thread thread = new Thread(myRunnable);

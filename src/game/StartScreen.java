@@ -1,11 +1,14 @@
+package game;
+
+import resource.GameInfo;
+import resource.GameState;
+import resource.Resource;
+import resource.SoundPlayer;
+
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
-import java.awt.image.BufferedImage;
-import java.io.IOException;
-import java.util.ArrayList;
 
 public class StartScreen extends JPanel {
     public GameState currentState = GameState.START;
@@ -120,16 +123,16 @@ public class StartScreen extends JPanel {
                 repaint();
                 //if start button clicked
                 if (mouseClickX >= buttonXLocation && mouseClickX <= buttonXLocation + 210 && mouseClickY >= 436 && mouseClickY <= 506) {
-            /*TankGame.soundEffectPlayer.setSoundFile("menusound2.wav");
-            TankGame.soundEffectPlayer.play();*/
+            /*game.TankGame.soundEffectPlayer.setSoundFile("menusound2.wav");
+            game.TankGame.soundEffectPlayer.play();*/
                     setCurrentState(GameState.RUNNING);
                     this.jFrame.setVisible(false);
                 }
 
                 //if exit button clicked
                 if (mouseClickX >= buttonXLocation && mouseClickX <= buttonXLocation + 210 && mouseClickY >= 526 && mouseClickY <= 596) {
-            /*TankGame.soundEffectPlayer.setSoundFile("menusound2.wav");
-            TankGame.soundEffectPlayer.play();*/
+            /*game.TankGame.soundEffectPlayer.setSoundFile("menusound2.wav");
+            game.TankGame.soundEffectPlayer.play();*/
                     System.exit(0);
                 }
 

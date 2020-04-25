@@ -1,3 +1,10 @@
+package game;
+
+import resource.GameInfo;
+import resource.GameState;
+import resource.Resource;
+import resource.SoundPlayer;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.MouseAdapter;
@@ -125,8 +132,8 @@ public class GameOverScreen extends JPanel {
                 repaint();
                 //if retry button clicked
                 if (mouseClickX >= buttonXLocation && mouseClickX <= buttonXLocation + 210 && mouseClickY >= 436 && mouseClickY <= 506) {
-            /*TankGame.soundEffectPlayer.setSoundFile("menusound2.wav");
-            TankGame.soundEffectPlayer.play();*/
+            /*game.TankGame.soundEffectPlayer.setSoundFile("menusound2.wav");
+            game.TankGame.soundEffectPlayer.play();*/
                     mouseClickX = 0;
                     mouseClickY = 0;
                     setCurrentState(GameState.RESET);
@@ -135,8 +142,8 @@ public class GameOverScreen extends JPanel {
 
                 //if exit button clicked
                 if (mouseClickX >= buttonXLocation && mouseClickX <= buttonXLocation + 210 && mouseClickY >= 526 && mouseClickY <= 616) {
-            /*TankGame.soundEffectPlayer.setSoundFile("menusound2.wav");
-            TankGame.soundEffectPlayer.play();*/
+            /*game.TankGame.soundEffectPlayer.setSoundFile("menusound2.wav");
+            game.TankGame.soundEffectPlayer.play();*/
                     System.exit(0);
                 }
 

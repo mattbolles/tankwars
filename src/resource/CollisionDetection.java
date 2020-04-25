@@ -1,17 +1,17 @@
-// used to detect whether a collision happens between two game objects
-// processes all collision detecting for gameobjects
+package resource;// used to detect whether a collision happens between two game objects
+// processes all collision detecting for gameobject
 
-import java.awt.*;
-import java.awt.image.BufferedImage;
+import gameobject.GameObject;
+import gameobject.Tank;
+import gameobject.powerup.SpeedBoost;
+import gameobject.wall.BreakableWall;
+import gameobject.wall.UnBreakableWall;
+import gameobject.weapon.Bullet;
+
 import java.util.ArrayList;
 
 public class CollisionDetection{
-
-    public GameObject gameObject1, gameObject2;
-    public int x1, x2, y1, y2, height1, height2, width1, width2, collisionX, collisionY;
     boolean collisionDetected = false;
-    BufferedImage objectImage1, objectImage2;
-    Rectangle intersection;
 
     public CollisionDetection() {
     }
@@ -28,8 +28,6 @@ public class CollisionDetection{
 
         //process all game objects in list, and return completed list after done
         for (int currentGameObjectIndex = 0; currentGameObjectIndex < gameObjects.size(); currentGameObjectIndex++) {
-
-
             for (int anotherGameObjectIndex = 0; anotherGameObjectIndex < gameObjects.size(); anotherGameObjectIndex++) {
                 // for readability
                 GameObject currentGameObject = gameObjects.get(currentGameObjectIndex);
@@ -40,7 +38,6 @@ public class CollisionDetection{
                             currentGameObject.getHitBox().getBounds().intersects(anotherGameObject.getHitBox().getBounds());
                     // if collision is detected between the two
                     if (collisionDetected) {
-
                         // if tank colliding with something
                         if (currentGameObject instanceof Tank) {
                             if (anotherGameObject instanceof Tank) {
@@ -106,8 +103,6 @@ public class CollisionDetection{
                                 ((BreakableWall) anotherGameObject).damageWall(5);
                             }
                         }
-
-
                     }
                 }
             }

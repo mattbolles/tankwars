@@ -1,3 +1,7 @@
+package resource;
+
+import game.*;
+
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;

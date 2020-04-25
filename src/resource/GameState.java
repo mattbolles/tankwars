@@ -1,2 +1,4 @@
+package resource;
+
 public enum GameState { START, RUNNING, PAUSE, GAME_OVER, CONTROLS_MENU, ABOUT, EXITGAME, RESET, RESET_TO_MENU
 }

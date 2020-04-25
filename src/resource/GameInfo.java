@@ -1,3 +1,5 @@
+package resource;
+
 import java.awt.*;
 
 public class GameInfo {

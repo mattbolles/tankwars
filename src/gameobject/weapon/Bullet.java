@@ -1,7 +1,10 @@
-import javax.swing.*;
+package gameobject.weapon;
+
+import gameobject.GameObject;
+import resource.GameInfo;
+import resource.Resource;
+
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
 

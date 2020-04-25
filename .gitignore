@@ -13,3 +13,5 @@ local.properties
 .loadpath
 .recommenders
 *.launch
+*.rtf
+*.xml

@@ -8,7 +8,7 @@ import static javax.imageio.ImageIO.read;
 
 public class BreakableWall extends Wall {
     int x, y, height, width;
-    int health = 25; // the wall sustains damage, much like a tank. when health reaches 0, it is destroyed
+    int health = 15; // the wall sustains damage, much like a tank. when health reaches 0, it is destroyed
     BufferedImage wallImage;
     int tickCount = 0;
     int explosionTickCount = 0;
@@ -70,7 +70,7 @@ public class BreakableWall extends Wall {
     public void drawImage(Graphics g) {
         Graphics2D g2 = (Graphics2D)g;
         // if wall is damaged, show broken wall instead
-        if (getHealth() == 25) {
+        if (getHealth() == 15) {
             g2.drawImage(Resource.getResourceImage("breakableWall"), x, y, null);
         }
         else {

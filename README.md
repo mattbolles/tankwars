@@ -1,4 +1,4 @@
-# Tank Wars
+![Tank Wars Logo](http://www.mattrbolles.com/files/tankwarslogo.png)
 
 ## Student Name  : Matt Bolles
 ## Student ID    : 913249017

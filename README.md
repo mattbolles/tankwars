@@ -1,4 +1,5 @@
 ![Tank Wars Logo](http://www.mattrbolles.com/files/tankwarslogo.png)
+
 2d top down 2 player tank fighting game created for my software development class.
 
 ## Student Name  : Matt Bolles

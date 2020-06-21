@@ -1,10 +1,13 @@
-# csc413-tankgame
+# Tank Wars
 
 ## Student Name  : Matt Bolles
 ## Student ID    : 913249017
 ## IDE Used      : IntelliJ IDEA Ultimate 2019.3.3
 ## Java Version  : 12.0.2
 
+## Screenshots
+![Tank Wars Screenshot 1](http://www.mattrbolles.com/files/TankWars1.png)
+![Tank Wars Screenshot 2](http://www.mattrbolles.com/files/TankWars2.png)
 
 ## How To Run
 

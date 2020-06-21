@@ -4,10 +4,7 @@
 ## Student ID    : 913249017
 ## IDE Used      : IntelliJ IDEA Ultimate 2019.3.3
 ## Java Version  : 12.0.2
-## GitHub Information
-[Link](https://github.com/csc413-01-spring2020/csc413-tankgame-mattbolles)
 
-Relative Directory: `csc413-tankgame-mattbolles-master`
 
 ## How To Run
 
